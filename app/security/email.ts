@@ -7,12 +7,14 @@ function escapeHtml(value: string) {
 export async function sendPasswordResetEmail(email: string, resetUrl: string): Promise<boolean> {
   const apiKey = getRuntimeValue("RESEND_API_KEY");
   const from = getRuntimeValue("MAIL_FROM");
+  const replyTo = getRuntimeValue("MAIL_REPLY_TO");
   if (!apiKey || !from) return false;
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { authorization: `Bearer ${apiKey}`, "content-type": "application/json", "user-agent": "the-curated-pin/1.0" },
     body: JSON.stringify({
       from,
+      ...(replyTo ? { reply_to: replyTo } : {}),
       to: [email],
       subject: "Reset your The Curated Pin password",
       html: `<p>We received a request to reset your password.</p><p><a href="${escapeHtml(resetUrl)}">Reset your password</a></p><p>This link expires in 30 minutes and can be used once. If you did not request it, you can ignore this email.</p>`,
@@ -33,6 +35,7 @@ async function sendAudienceEmailMessage(input: {
 }): Promise<AudienceEmailResult> {
   const apiKey = getRuntimeValue("RESEND_API_KEY");
   const from = getRuntimeValue("MAIL_FROM");
+  const replyTo = getRuntimeValue("MAIL_REPLY_TO");
   if (!apiKey || !from) return { ok: false, id: "", error: "email_not_configured" };
   try {
     const response = await fetch("https://api.resend.com/emails", {
@@ -45,6 +48,7 @@ async function sendAudienceEmailMessage(input: {
       },
       body: JSON.stringify({
         from,
+        ...(replyTo ? { reply_to: replyTo } : {}),
         to: [input.to],
         subject: input.subject,
         html: input.html,

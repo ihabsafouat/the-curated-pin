@@ -122,7 +122,8 @@ There is no default or hidden admin password. Register the owner email you contr
 | `NEXT_PUBLIC_GA_ID` | Optional | Google Analytics measurement ID. |
 | `NEXT_PUBLIC_CLARITY_ID` | Optional | Microsoft Clarity project ID; loaded only after analytics consent. |
 | `RESEND_API_KEY` | Production email | Server-only email provider API key. |
-| `MAIL_FROM` | Production email | Verified sender identity for account and audience email. |
+| `MAIL_FROM` | Production email | Verified sender identity. `The Curated Pin <onboarding@resend.dev>` works for owner-only testing; Resend blocks delivery to other recipients until you verify your own domain. |
+| `MAIL_REPLY_TO` | Optional | Reply destination, for example `the-curated-pin@gmail.com`. Gmail can receive replies but cannot replace a verified sending domain. |
 
 `NODE_ENV` is managed by Next.js/the hosting platform and should not normally be added manually.
 

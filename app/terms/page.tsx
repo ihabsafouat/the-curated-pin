@@ -12,6 +12,6 @@ export default function TermsPage() {
     <section><h2>Reader feedback</h2><p>You retain responsibility for feedback you submit. Do not submit unlawful, abusive, private or infringing material. Giving publication consent allows us to display, edit for formatting or decline the note after moderation; it does not guarantee publication.</p></section>
     <section><h2>Affiliate links and third parties</h2><p>Some external links may be affiliate links, meaning we may earn a commission if you make a qualifying purchase without increasing your price. Recommendations remain editorial decisions. Third-party sites control their own products, availability, prices, returns, terms and privacy practices.</p></section>
     <section><h2>Intellectual property</h2><p>Unless otherwise stated, original articles, graphics, downloadable products, branding and site design may not be republished, redistributed or sold without permission. Short quotations with clear attribution and a link are welcome where permitted by law.</p></section>
-    <section><h2>Changes and contact</h2><p>These terms may be updated when the service changes. Material updates will use a new date. Questions can be sent to hello@thecuratedpin.com.</p></section>
+    <section><h2>Changes and contact</h2><p>These terms may be updated when the service changes. Material updates will use a new date. Questions can be sent to the-curated-pin@gmail.com.</p></section>
   </section><SubFooter/></main>;
 }
