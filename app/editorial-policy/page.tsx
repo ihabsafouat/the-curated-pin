@@ -1,0 +1,10 @@
+import Breadcrumbs from "../components/Breadcrumbs";
+import SubHeader from "../components/SubHeader";
+import SubFooter from "../components/SubFooter";
+import { staticPageMetadata } from "../seo";
+
+export const metadata = staticPageMetadata({ title: 'Editorial & Affiliate Policy', description: 'How The Curated Pin researches, updates and labels editorial recommendations and affiliate links.', path: '/editorial-policy' });
+
+export default function EditorialPolicyPage() {
+  return <main><SubHeader/><Breadcrumbs items={[{label:"Home",href:"/"},{label:"Editorial policy"}]}/><section className="legalHero shell"><small>EDITORIAL & AFFILIATE POLICY</small><h1>Reader trust comes<br/><em>before the click.</em></h1><p>Our recommendations should be understandable, useful and honest about how the publication may earn money.</p></section><section className="legalBody shell"><section><h2>How we choose topics</h2><p>We use reader questions, search patterns, Pinterest signals and recurring everyday problems to decide what deserves a guide. Popularity can reveal demand, but it does not replace usefulness or accuracy.</p></section><section><h2>How recommendations work</h2><p>Products are considered for fit, function, presentation, value and relevance to the guide. Payment, gifts or affiliate availability do not guarantee inclusion or a positive opinion.</p></section><section><h2>Affiliate disclosure</h2><p>Some links may earn The Curated Pin a commission at no extra cost to the reader. These links are labeled and use the appropriate sponsored relationship marker. Editorial conclusions are not sold.</p></section><section><h2>Corrections and updates</h2><p>Material corrections are made as soon as reasonably possible. Time-sensitive guides should show an updated date, and outdated recommendations may be removed.</p></section><section><h2>Health, pet and financial boundaries</h2><p>Our content is general educational information, not individualized veterinary, medical, legal or financial advice. Readers should use a qualified professional for decisions that require diagnosis or personal assessment.</p></section></section><SubFooter/></main>;
+}

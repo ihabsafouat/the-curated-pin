@@ -1,0 +1,11 @@
+import { getReaderFeedback } from "../../../db/data";
+import { getCsrfToken, requireRole } from "../../security/auth";
+import AdminHeader from "../components/AdminHeader";
+
+export const dynamic = "force-dynamic";
+
+export default async function FeedbackPage() {
+  const editor = await requireRole("editor", "/studio/feedback");
+  const [items, csrf] = await Promise.all([getReaderFeedback(), getCsrfToken()]);
+  return <main className="admin"><AdminHeader email={editor.email} role={editor.role}/><div className="adminShell"><header className="dashboardTitle"><div><small>READER SIGNALS</small><h1>Feedback and review moderation.</h1><p>Reader notes stay private until an editor approves them. Only notes with explicit publication consent should ever be shown publicly.</p></div></header><section className="feedbackManager">{items.length ? items.map(item => <article className="feedbackAdminCard" key={item.id}><header><div><b>{item.articleTitle}</b><a href={`/article/${item.articleSlug}`} target="_blank">View article ↗</a></div><span className={`feedbackStatus ${item.status}`}>{item.status}</span></header><div className="feedbackSignals"><span>{item.helpful === null ? "No helpfulness vote" : item.helpful ? "✓ Useful" : "Needs improvement"}</span><span>{item.rating ? `${item.rating}/5 rating` : "No rating"}</span><span>{item.consentPublish ? "Publication allowed" : "Private feedback"}</span></div>{item.message && <blockquote>“{item.message}”</blockquote>}<footer><span>{item.displayName || "Anonymous reader"} · {new Date(item.createdAt).toLocaleDateString("en", { year:"numeric", month:"short", day:"numeric" })}</span>{item.status === "pending" && <div><form action={`/api/admin/feedback/${item.id}`} method="post"><input type="hidden" name="_csrf" value={csrf}/><input type="hidden" name="status" value="approved"/><button type="submit" disabled={!item.consentPublish} title={!item.consentPublish ? "Reader did not consent to publication" : undefined}>Approve</button></form><form action={`/api/admin/feedback/${item.id}`} method="post"><input type="hidden" name="_csrf" value={csrf}/><input type="hidden" name="status" value="rejected"/><button className="dangerLink" type="submit">Reject</button></form></div>}</footer></article>) : <div className="analyticsEmpty">Reader feedback will appear here after launch.</div>}</section></div></main>;
+}

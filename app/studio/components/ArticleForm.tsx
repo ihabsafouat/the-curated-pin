@@ -1,0 +1,118 @@
+"use client";
+
+import { useState } from "react";
+import type { ArticleBlock } from "../../content";
+import type { ManagedArticle } from "../../../db/data";
+import type { Category, UserRole } from "../../../db/types";
+import type { MediaAsset } from "../../../db/media";
+import MediaPickerField from "./MediaPickerField";
+import GalleryMediaField from "./GalleryMediaField";
+
+function categoryLabel(category: Category) {
+  const depth = Math.max(0, category.path.split("/").length - 1);
+  return `${"— ".repeat(depth)}${category.name}${category.status === "inactive" ? " · inactive" : ""}`;
+}
+
+function id() {
+  return typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `b-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+}
+
+const lines = (value: string) => value.split("\n").map((item) => item.trim()).filter(Boolean);
+const joinLines = (items: string[]) => items.join("\n");
+const pipeParts = (value: string) => value.split("|").map((item) => item.trim());
+
+function newBlock(type: ArticleBlock["type"]): ArticleBlock {
+  switch (type) {
+    case "paragraph": return { id: id(), type, text: "" };
+    case "heading": return { id: id(), type, level: 2, text: "" };
+    case "image": return { id: id(), type, url: "", alt: "", caption: "" };
+    case "gallery": return { id: id(), type, title: "", images: [] };
+    case "idea": return { id: id(), type, eyebrow: "IDEA", title: "", body: "", image: "", imageAlt: "", budget: "", bestFor: "", setting: "" };
+    case "checklist": return { id: id(), type, title: "Checklist", items: [""] };
+    case "bullets": return { id: id(), type, title: "", items: [""] };
+    case "table": return { id: id(), type, title: "", headers: ["Option", "Best for"], rows: [["", ""]] };
+    case "comparison": return { id: id(), type, title: "", leftTitle: "Option A", leftItems: [""], rightTitle: "Option B", rightItems: [""] };
+    case "tip": return { id: id(), type, label: "CURATED TIP", title: "", body: "" };
+    case "pros_cons": return { id: id(), type, title: "", pros: [""], cons: [""] };
+    case "affiliate_product": return { id: id(), type, merchant: "", network: "", name: "", description: "", url: "", image: "", imageAlt: "", cta: "See the product", priceNote: "" };
+    case "lead_magnet": return { id: id(), type, eyebrow: "FREE DOWNLOAD", title: "", body: "", cta: "Get the free guide", url: "" };
+    case "product_cta": return { id: id(), type, eyebrow: "THE CURATED PIN SHOP", title: "", body: "", cta: "View the bundle", url: "", price: "", image: "", imageAlt: "" };
+    case "internal_link": return { id: id(), type, eyebrow: "KEEP PLANNING", title: "", body: "", anchor: "Read the guide", url: "/" };
+    case "faq": return { id: id(), type, title: "Frequently asked questions", items: [{ question: "", answer: "" }] };
+    case "pinterest_asset": return { id: id(), type, title: "Save this idea", image: "", imageAlt: "", pinTitle: "", pinDescription: "" };
+    case "quote": return { id: id(), type, text: "", attribution: "" };
+    case "divider": return { id: id(), type };
+  }
+}
+
+const blockLabels: Array<[ArticleBlock["type"], string]> = [
+  ["paragraph", "Paragraph"], ["heading", "Heading"], ["idea", "Idea card"], ["image", "Image"], ["gallery", "Gallery"],
+  ["checklist", "Checklist"], ["bullets", "Bullet list"], ["table", "Table"], ["comparison", "Comparison"], ["tip", "Tip box"],
+  ["pros_cons", "Pros / Cons"], ["affiliate_product", "Affiliate product"], ["lead_magnet", "Lead magnet CTA"], ["product_cta", "Digital product CTA"],
+  ["internal_link", "Internal link card"], ["faq", "FAQ"], ["pinterest_asset", "Pinterest asset"], ["quote", "Quote"], ["divider", "Divider"],
+];
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return <div className="field"><label>{label}</label>{children}</div>;
+}
+
+function BlockFields({ block, onChange, media }: { block: ArticleBlock; onChange: (block: ArticleBlock) => void; media: MediaAsset[] }) {
+  switch (block.type) {
+    case "paragraph": return <Field label="Paragraph"><textarea rows={7} value={block.text} onChange={(e) => onChange({ ...block, text: e.target.value })}/></Field>;
+    case "heading": return <div className="fieldGrid"><Field label="Heading"><input value={block.text} onChange={(e) => onChange({ ...block, text: e.target.value })}/></Field><Field label="Level"><select value={block.level} onChange={(e) => onChange({ ...block, level: Number(e.target.value) === 3 ? 3 : 2 })}><option value={2}>H2</option><option value={3}>H3</option></select></Field></div>;
+    case "image": return <><MediaPickerField label="Image" value={block.url} onChange={(url) => onChange({ ...block, url })} altValue={block.alt} onAltChange={(alt) => onChange({ ...block, alt })} media={media}/><Field label="Caption"><input value={block.caption} onChange={(e) => onChange({ ...block, caption: e.target.value })}/></Field></>;
+    case "gallery": return <GalleryMediaField title={block.title} images={block.images} onTitleChange={(title) => onChange({ ...block, title })} onChange={(images) => onChange({ ...block, images })} media={media}/>;
+    case "idea": return <><div className="fieldGrid"><Field label="Eyebrow"><input value={block.eyebrow} onChange={(e) => onChange({ ...block, eyebrow: e.target.value })}/></Field><Field label="Title"><input value={block.title} onChange={(e) => onChange({ ...block, title: e.target.value })}/></Field></div><Field label="Description"><textarea rows={6} value={block.body} onChange={(e) => onChange({ ...block, body: e.target.value })}/></Field><div className="fieldGrid"><Field label="Budget"><input value={block.budget} placeholder="$ / $$ / $$$" onChange={(e) => onChange({ ...block, budget: e.target.value })}/></Field><Field label="Best for"><input value={block.bestFor} onChange={(e) => onChange({ ...block, bestFor: e.target.value })}/></Field></div><Field label="Setting"><input value={block.setting} placeholder="Indoor · Outdoor · Either" onChange={(e) => onChange({ ...block, setting: e.target.value })}/></Field><MediaPickerField label="Optional image" value={block.image} onChange={(image) => onChange({ ...block, image })} altValue={block.imageAlt} onAltChange={(imageAlt) => onChange({ ...block, imageAlt })} media={media}/></>;
+    case "checklist": return <><Field label="Title"><input value={block.title} onChange={(e) => onChange({ ...block, title: e.target.value })}/></Field><Field label="Items · one per line"><textarea rows={7} value={joinLines(block.items)} onChange={(e) => onChange({ ...block, items: lines(e.target.value) })}/></Field></>;
+    case "bullets": return <><Field label="Optional title"><input value={block.title} onChange={(e) => onChange({ ...block, title: e.target.value })}/></Field><Field label="Items · one per line"><textarea rows={7} value={joinLines(block.items)} onChange={(e) => onChange({ ...block, items: lines(e.target.value) })}/></Field></>;
+    case "table": return <><Field label="Title"><input value={block.title} onChange={(e) => onChange({ ...block, title: e.target.value })}/></Field><Field label="Headers · separated with |"><input value={block.headers.join(" | ")} onChange={(e) => onChange({ ...block, headers: pipeParts(e.target.value).filter(Boolean) })}/></Field><Field label="Rows · one row per line, columns separated with |"><textarea rows={7} value={block.rows.map((row) => row.join(" | ")).join("\n")} onChange={(e) => onChange({ ...block, rows: e.target.value.split("\n").filter(Boolean).map(pipeParts) })}/></Field></>;
+    case "comparison": return <><Field label="Title"><input value={block.title} onChange={(e) => onChange({ ...block, title: e.target.value })}/></Field><div className="fieldGrid"><div><Field label="Left title"><input value={block.leftTitle} onChange={(e) => onChange({ ...block, leftTitle: e.target.value })}/></Field><Field label="Left items"><textarea rows={6} value={joinLines(block.leftItems)} onChange={(e) => onChange({ ...block, leftItems: lines(e.target.value) })}/></Field></div><div><Field label="Right title"><input value={block.rightTitle} onChange={(e) => onChange({ ...block, rightTitle: e.target.value })}/></Field><Field label="Right items"><textarea rows={6} value={joinLines(block.rightItems)} onChange={(e) => onChange({ ...block, rightItems: lines(e.target.value) })}/></Field></div></div></>;
+    case "tip": return <><div className="fieldGrid"><Field label="Label"><input value={block.label} onChange={(e) => onChange({ ...block, label: e.target.value })}/></Field><Field label="Title"><input value={block.title} onChange={(e) => onChange({ ...block, title: e.target.value })}/></Field></div><Field label="Tip"><textarea rows={5} value={block.body} onChange={(e) => onChange({ ...block, body: e.target.value })}/></Field></>;
+    case "pros_cons": return <><Field label="Title"><input value={block.title} onChange={(e) => onChange({ ...block, title: e.target.value })}/></Field><div className="fieldGrid"><Field label="Pros · one per line"><textarea rows={6} value={joinLines(block.pros)} onChange={(e) => onChange({ ...block, pros: lines(e.target.value) })}/></Field><Field label="Cons · one per line"><textarea rows={6} value={joinLines(block.cons)} onChange={(e) => onChange({ ...block, cons: lines(e.target.value) })}/></Field></div></>;
+    case "affiliate_product": return <><div className="fieldGrid"><Field label="Merchant"><input value={block.merchant} placeholder="Amazon, Oriental Trading…" onChange={(e) => onChange({ ...block, merchant: e.target.value })}/></Field><Field label="Affiliate network"><input value={block.network} placeholder="Impact, CJ, Amazon…" onChange={(e) => onChange({ ...block, network: e.target.value })}/></Field></div><Field label="Product name"><input value={block.name} onChange={(e) => onChange({ ...block, name: e.target.value })}/></Field><Field label="Why it belongs here"><textarea rows={4} value={block.description} onChange={(e) => onChange({ ...block, description: e.target.value })}/></Field><Field label="Affiliate URL"><input type="url" value={block.url} onChange={(e) => onChange({ ...block, url: e.target.value })}/></Field><div className="fieldGrid"><Field label="CTA"><input value={block.cta} onChange={(e) => onChange({ ...block, cta: e.target.value })}/></Field><Field label="Price note"><input value={block.priceNote} placeholder="Check current price" onChange={(e) => onChange({ ...block, priceNote: e.target.value })}/></Field></div><MediaPickerField label="Optional product image" value={block.image} onChange={(image) => onChange({ ...block, image })} altValue={block.imageAlt} onAltChange={(imageAlt) => onChange({ ...block, imageAlt })} media={media}/></>;
+    case "lead_magnet": return <><div className="fieldGrid"><Field label="Eyebrow"><input value={block.eyebrow} onChange={(e) => onChange({ ...block, eyebrow: e.target.value })}/></Field><Field label="Title"><input value={block.title} onChange={(e) => onChange({ ...block, title: e.target.value })}/></Field></div><Field label="Value proposition"><textarea rows={4} value={block.body} onChange={(e) => onChange({ ...block, body: e.target.value })}/></Field><div className="fieldGrid"><Field label="CTA"><input value={block.cta} onChange={(e) => onChange({ ...block, cta: e.target.value })}/></Field><Field label="Destination URL"><input value={block.url} placeholder="/free/… or https://…" onChange={(e) => onChange({ ...block, url: e.target.value })}/></Field></div></>;
+    case "product_cta": return <><div className="fieldGrid"><Field label="Eyebrow"><input value={block.eyebrow} onChange={(e) => onChange({ ...block, eyebrow: e.target.value })}/></Field><Field label="Price"><input value={block.price} onChange={(e) => onChange({ ...block, price: e.target.value })}/></Field></div><Field label="Product title"><input value={block.title} onChange={(e) => onChange({ ...block, title: e.target.value })}/></Field><Field label="Description"><textarea rows={4} value={block.body} onChange={(e) => onChange({ ...block, body: e.target.value })}/></Field><div className="fieldGrid"><Field label="CTA"><input value={block.cta} onChange={(e) => onChange({ ...block, cta: e.target.value })}/></Field><Field label="Product URL"><input value={block.url} placeholder="/shop/… or https://…" onChange={(e) => onChange({ ...block, url: e.target.value })}/></Field></div><MediaPickerField label="Optional product image" value={block.image} onChange={(image) => onChange({ ...block, image })} altValue={block.imageAlt} onAltChange={(imageAlt) => onChange({ ...block, imageAlt })} media={media}/></>;
+    case "internal_link": return <><div className="fieldGrid"><Field label="Eyebrow"><input value={block.eyebrow} onChange={(e) => onChange({ ...block, eyebrow: e.target.value })}/></Field><Field label="Link anchor"><input value={block.anchor} onChange={(e) => onChange({ ...block, anchor: e.target.value })}/></Field></div><Field label="Title"><input value={block.title} onChange={(e) => onChange({ ...block, title: e.target.value })}/></Field><Field label="Context"><textarea rows={3} value={block.body} onChange={(e) => onChange({ ...block, body: e.target.value })}/></Field><Field label="Internal URL"><input value={block.url} placeholder="/article/…" onChange={(e) => onChange({ ...block, url: e.target.value })}/></Field></>;
+    case "faq": return <><Field label="Title"><input value={block.title} onChange={(e) => onChange({ ...block, title: e.target.value })}/></Field><Field label="FAQs · one per line: Question | Answer"><textarea rows={9} value={block.items.map((item) => `${item.question} | ${item.answer}`).join("\n")} onChange={(e) => onChange({ ...block, items: e.target.value.split("\n").filter(Boolean).map((row) => { const [question = "", ...answer] = row.split("|"); return { question: question.trim(), answer: answer.join("|").trim() }; }) })}/></Field></>;
+    case "pinterest_asset": return <><Field label="Block title"><input value={block.title} onChange={(e) => onChange({ ...block, title: e.target.value })}/></Field><MediaPickerField label="Pinterest image" value={block.image} onChange={(image) => onChange({ ...block, image })} altValue={block.imageAlt} onAltChange={(imageAlt) => onChange({ ...block, imageAlt })} media={media} mode="pinterest"/><Field label="Pinterest title"><input value={block.pinTitle} onChange={(e) => onChange({ ...block, pinTitle: e.target.value })}/></Field><Field label="Pinterest description"><textarea rows={4} value={block.pinDescription} onChange={(e) => onChange({ ...block, pinDescription: e.target.value })}/></Field></>;
+    case "quote": return <><Field label="Quote"><textarea rows={4} value={block.text} onChange={(e) => onChange({ ...block, text: e.target.value })}/></Field><Field label="Attribution"><input value={block.attribution} onChange={(e) => onChange({ ...block, attribution: e.target.value })}/></Field></>;
+    case "divider": return <p className="helper">A visual breathing space between sections.</p>;
+  }
+}
+
+export default function ArticleForm({ article, csrf, role, categories, media }: { article?: ManagedArticle; csrf: string; role: UserRole; categories: Category[]; media: MediaAsset[] }) {
+  const initialBlocks = article?.blocks?.length ? article.blocks : [newBlock("heading"), newBlock("paragraph")];
+  const [blocks, setBlocks] = useState<ArticleBlock[]>(initialBlocks);
+  const [addType, setAddType] = useState<ArticleBlock["type"]>("paragraph");
+  const [heroImage, setHeroImage] = useState(article?.image ?? "");
+  const [heroAlt, setHeroAlt] = useState(article?.imageAlt ?? article?.title ?? "");
+  const [socialImage, setSocialImage] = useState(article?.socialImage ?? "");
+  const action = article ? `/api/admin/articles/${article.id}` : "/api/admin/articles";
+  const canPublish = role === "editor" || role === "admin";
+  const activeCategories = categories.filter((category) => category.status === "active");
+  const preferred = activeCategories.find((category) => category.path === "celebrations/birthday-parties") ?? activeCategories[0];
+  const selectedCategoryId = article?.categoryId ?? preferred?.id;
+
+  function move(index: number, delta: number) {
+    const nextIndex = index + delta;
+    if (nextIndex < 0 || nextIndex >= blocks.length) return;
+    const next = [...blocks];
+    [next[index], next[nextIndex]] = [next[nextIndex], next[index]];
+    setBlocks(next);
+  }
+
+  return <form className="editorForm" action={action} method="post"><input type="hidden" name="_csrf" value={csrf}/><input type="hidden" name="blocksJson" value={JSON.stringify(blocks)}/>
+    <div className="editorBar"><div><small>{article ? "EDIT ARTICLE" : "NEW ARTICLE"}</small><h1>{article ? article.title : "Create a guide"}</h1></div><div><a href="/studio">Cancel</a><button type="submit">{article ? "Save changes" : "Create article"}</button></div></div>
+    <div className="editorLayout"><div className="editorMain">
+      <section className="editorCard"><h2>Story</h2><div className="field"><label>Title</label><input name="title" defaultValue={article?.title} required placeholder="A clear, useful article title"/></div><div className="field"><label>Short introduction</label><textarea name="dek" defaultValue={article?.dek} required rows={3} placeholder="What the reader will get from this guide."/></div><div className="fieldGrid"><div className="field"><label>Slug</label><input name="slug" defaultValue={article?.slug} placeholder="generated-from-title"/></div><div className="field"><label>Read time</label><input name="readTime" defaultValue={article?.readTime ?? "6 min read"}/></div></div><MediaPickerField label="Hero image" name="image" value={heroImage} onChange={setHeroImage} altValue={heroAlt} onAltChange={setHeroAlt} media={media} required/><input type="hidden" name="imageAlt" value={heroAlt}/><small className="fieldNote">Describe the image itself; do not stuff the target keyword.</small></section>
+      <section className="editorCard"><div className="cardTitle"><div><h2>Rich content blocks</h2><p>Build useful, visual pages without injecting HTML. Affiliate blocks are automatically marked sponsored; product and lead-magnet blocks stay distinct from editorial links.</p></div></div><div className="blockAddBar"><select value={addType} onChange={(e) => setAddType(e.target.value as ArticleBlock["type"])}>{blockLabels.map(([value,label]) => <option value={value} key={value}>{label}</option>)}</select><button type="button" className="softButton" onClick={() => setBlocks([...blocks, newBlock(addType)])}>+ Add block</button></div>
+        <div className="blockEditorList">{blocks.map((block, index) => <article className="blockEditor" key={block.id}><header><div><small>{String(index + 1).padStart(2,"0")}</small><b>{blockLabels.find(([type]) => type === block.type)?.[1] ?? block.type}</b></div><div><button type="button" onClick={() => move(index,-1)} disabled={index===0}>↑</button><button type="button" onClick={() => move(index,1)} disabled={index===blocks.length-1}>↓</button><button type="button" className="dangerText" onClick={() => setBlocks(blocks.filter((_,i)=>i!==index))} disabled={blocks.length===1}>Remove</button></div></header><BlockFields block={block} media={media} onChange={(nextBlock) => setBlocks(blocks.map((item,i)=>i===index?nextBlock:item))}/></article>)}</div>
+      </section>
+      <section className="editorCard"><h2>Legacy single affiliate CTA</h2><p className="helper">Optional compatibility field. New articles should normally use an Affiliate product block so each recommendation has its own context, merchant and disclosure.</p><div className="field"><label>Button label</label><input name="affiliateLabel" defaultValue={article?.affiliateLabel} placeholder="Shop the recommended party supplies"/></div><div className="field"><label>Destination URL</label><input type="url" name="affiliateUrl" defaultValue={article?.affiliateUrl} placeholder="https://…"/></div></section>
+    </div><aside className="editorSide">
+      <section className="editorCard"><h2>Publishing</h2><div className="field"><label>Status</label><select name="status" defaultValue={canPublish ? article?.status ?? "draft" : "draft"}><option value="draft">Draft</option>{canPublish && <option value="published">Published</option>}</select>{!canPublish && <small className="fieldNote">Authors submit drafts; an editor or admin publishes them.</small>}</div><div className="field"><label>Category</label><select name="categoryId" defaultValue={selectedCategoryId ? String(selectedCategoryId) : ""} required><option value="" disabled>Choose a category</option>{categories.map((category) => <option value={category.id} key={category.id} disabled={category.status === "inactive" && category.id !== article?.categoryId}>{categoryLabel(category)}</option>)}</select>{article && categories.find((category) => category.id === article.categoryId)?.status === "inactive" && <small className="fieldNote warning">This article is in an inactive legacy category. Reassign it to an active category before saving.</small>}</div></section>
+      <section className="editorCard"><h2>Search & Pinterest</h2><p className="helper">Keep this aligned to the page&apos;s keyword ownership in the SEO map. Canonical overrides are advanced controls—leave blank for a normal self-canonical page.</p><div className="field"><label>SEO title</label><input name="seoTitle" defaultValue={article?.seoTitle} maxLength={180} placeholder="Defaults to article title"/></div><div className="field"><label>Meta description</label><textarea name="seoDescription" defaultValue={article?.seoDescription} rows={5} maxLength={180} placeholder="A concise search description."/></div><MediaPickerField label="Social / Open Graph image" name="socialImage" value={socialImage} onChange={setSocialImage} media={media} mode="social" placeholder="Optional; defaults to the hero image"/><div className="field"><label>Canonical override</label><input name="canonicalPath" defaultValue={article?.canonicalPath} placeholder="Leave blank, or use /article/preferred-slug"/><small className="fieldNote">Use only when this page is intentionally a duplicate/variant of another same-site URL.</small></div><label className="taxonomyCheck"><input type="checkbox" name="seoIndex" defaultChecked={article?.seoIndex ?? true}/> Allow search indexing</label></section>
+      <section className="editorCard"><h2>Monetization guardrails</h2><p className="helper">Affiliate links render with rel=sponsored nofollow. Product CTAs are for products we sell. Internal-link blocks are for semantic navigation, not monetization.</p><ul className="editorMiniList"><li>Recommend only products that fit the section.</li><li>Never copy merchant descriptions.</li><li>Keep disclosure close to affiliate recommendations.</li><li>Use product blocks only for our own offers.</li></ul></section>
+    </aside></div>
+  </form>;
+}

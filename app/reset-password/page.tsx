@@ -1,0 +1,5 @@
+import Link from "next/link";
+import { ResetPasswordForm } from "../components/PasswordResetForms";
+import { privateRobots } from "../seo";
+export const metadata = { title: "Choose a New Password", description: "Set a new password using a secure reset link.", alternates: { canonical: "/reset-password" }, robots: privateRobots(true) };
+export default async function ResetPasswordPage({searchParams}:{searchParams:Promise<{token?:string}>}){const {token=""}=await searchParams;return <main className="authPage"><Link className="brand authBrand" href="/"><span className="brandmark"><i/><i/><i/></span><span>The Curated Pin</span></Link><section className="authCard"><div className="authIntro"><small>SECURE RESET</small><h1>Choose a new<br/><em>password.</em></h1><p>Reset links expire after 30 minutes and are valid only once.</p></div><div className="authPanel"><small>NEW PASSWORD</small><h2>Update access</h2>{token ? <ResetPasswordForm resetToken={token}/> : <p className="authError">This reset link is incomplete.</p>}</div></section></main>}

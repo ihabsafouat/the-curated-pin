@@ -1,0 +1,36 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: curated_pin
+      POSTGRES_USER: curated_pin
+      POSTGRES_PASSWORD: change-me
+    ports:
+      - "5432:5432"
+    volumes:
+      - curated_pin_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U curated_pin -d curated_pin"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  web:
+    build: .
+    profiles: ["app"]
+    environment:
+      DATABASE_URL: postgresql://curated_pin:change-me@postgres:5432/curated_pin
+      JWT_SECRET: local-development-jwt-secret-change-before-hosting
+      RATE_LIMIT_SECRET: local-development-rate-secret-change-before-hosting
+      APP_ORIGIN: http://localhost:3000
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+      NODE_ENV: production
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  curated_pin_postgres:

@@ -1,0 +1,209 @@
+{
+  "siteUrlPlaceholder": "{{SITE_URL}}",
+  "articles": [
+    {
+      "order": 1,
+      "slug": "birthday-party-ideas",
+      "title": "Birthday Party Ideas",
+      "seoTitle": "20 Birthday Party Ideas for Every Age, Budget & Vibe",
+      "keyword": "birthday party ideas",
+      "volume": 368000,
+      "kd": 22,
+      "category": "Birthday Parties",
+      "categoryPath": "celebrations/birthday-parties",
+      "board": "Birthday Party Ideas",
+      "pins": [
+        "20 Birthday Party Ideas Worth Copying",
+        "Birthday Party Ideas for Every Budget",
+        "Planning a Birthday? Start With These Ideas"
+      ]
+    },
+    {
+      "order": 2,
+      "slug": "teen-birthday-party-ideas",
+      "title": "Teen Birthday Party Ideas",
+      "seoTitle": "20 Teen Birthday Party Ideas That Feel Fun, Not Forced",
+      "keyword": "teen birthday party ideas",
+      "volume": 4400,
+      "kd": 14,
+      "category": "Teen Birthdays",
+      "categoryPath": "celebrations/birthday-parties/teen-birthdays",
+      "board": "Teen Birthday Party Ideas",
+      "pins": [
+        "20 Teen Birthday Party Ideas That Aren't Cringe",
+        "Teen Birthday Ideas They’ll Actually Want",
+        "Planning a Teen Birthday? Try These Ideas"
+      ]
+    },
+    {
+      "order": 3,
+      "slug": "13th-birthday-party-ideas",
+      "title": "13th Birthday Party Ideas",
+      "seoTitle": "15 13th Birthday Party Ideas for a Fun First Teen Celebration",
+      "keyword": "13th birthday party ideas",
+      "volume": 3600,
+      "kd": 17,
+      "category": "Teen Birthdays",
+      "categoryPath": "celebrations/birthday-parties/teen-birthdays",
+      "board": "Teen Birthday Party Ideas",
+      "pins": [
+        "15 Fun 13th Birthday Party Ideas",
+        "13th Birthday Ideas for the First Teen Year",
+        "What to Do for a 13th Birthday Party"
+      ]
+    },
+    {
+      "order": 4,
+      "slug": "18th-birthday-party-ideas",
+      "title": "18th Birthday Party Ideas",
+      "seoTitle": "15 18th Birthday Party Ideas for a Memorable Milestone",
+      "keyword": "18th birthday party ideas",
+      "volume": 4400,
+      "kd": 16,
+      "category": "Teen Birthdays",
+      "categoryPath": "celebrations/birthday-parties/teen-birthdays",
+      "board": "18th Birthday Party Ideas",
+      "pins": [
+        "15 Memorable 18th Birthday Party Ideas",
+        "18th Birthday Ideas for Every Budget",
+        "Planning an 18th Birthday? Start Here"
+      ]
+    },
+    {
+      "order": 5,
+      "slug": "birthday-party-ideas-for-girls",
+      "title": "Birthday Party Ideas for Girls",
+      "seoTitle": "15 Birthday Party Ideas for Girls, From Creative to Low-Key",
+      "keyword": "birthday party ideas for girls",
+      "volume": 2400,
+      "kd": 12,
+      "category": "Birthday Ideas by Age",
+      "categoryPath": "celebrations/birthday-parties/by-age",
+      "board": "Birthday Ideas by Age",
+      "pins": [
+        "15 Birthday Party Ideas for Girls",
+        "Creative Birthday Ideas for Girls of Different Ages",
+        "Girl Birthday Ideas Beyond One Theme"
+      ]
+    },
+    {
+      "order": 6,
+      "slug": "birthday-party-ideas-for-boys",
+      "title": "Birthday Party Ideas for Boys",
+      "seoTitle": "15 Birthday Party Ideas for Boys, From Active to Creative",
+      "keyword": "birthday party ideas for boys",
+      "volume": 1600,
+      "kd": 22,
+      "category": "Birthday Ideas by Age",
+      "categoryPath": "celebrations/birthday-parties/by-age",
+      "board": "Birthday Ideas by Age",
+      "pins": [
+        "15 Birthday Party Ideas for Boys",
+        "Fun Birthday Ideas for Boys of Different Ages",
+        "Boy Birthday Party Ideas Beyond One Theme"
+      ]
+    },
+    {
+      "order": 7,
+      "slug": "11-year-old-birthday-party-ideas",
+      "title": "Birthday Party Ideas for 11 Year Olds",
+      "seoTitle": "15 Birthday Party Ideas for 11 Year Olds That Feel Grown-Up Enough",
+      "keyword": "ideas for 11 year olds birthday",
+      "volume": 1600,
+      "kd": 14,
+      "category": "Birthday Ideas by Age",
+      "categoryPath": "celebrations/birthday-parties/by-age",
+      "board": "Birthday Ideas by Age",
+      "pins": [
+        "15 Birthday Ideas for 11 Year Olds",
+        "11-Year-Old Birthday Ideas That Feel Just Right",
+        "What to Do for an 11th Birthday Party"
+      ]
+    },
+    {
+      "order": 8,
+      "slug": "12-year-old-birthday-party-ideas",
+      "title": "12 Year Old Birthday Party Ideas",
+      "seoTitle": "15 Birthday Party Ideas for 12 Year Olds, From Chill to Active",
+      "keyword": "12 year birthday ideas",
+      "volume": 1600,
+      "kd": 19,
+      "category": "Birthday Ideas by Age",
+      "categoryPath": "celebrations/birthday-parties/by-age",
+      "board": "Birthday Ideas by Age",
+      "pins": [
+        "15 Birthday Ideas for 12 Year Olds",
+        "12-Year-Old Birthday Ideas: Chill to Active",
+        "What to Do for a 12th Birthday Party"
+      ]
+    },
+    {
+      "order": 9,
+      "slug": "1st-birthday-party-ideas",
+      "title": "1st Birthday Party Ideas",
+      "seoTitle": "15 First Birthday Party Ideas That Keep the Day Simple and Special",
+      "keyword": "1st birthday party ideas",
+      "volume": 3600,
+      "kd": 20,
+      "category": "First Birthdays",
+      "categoryPath": "celebrations/birthday-parties/first-birthdays",
+      "board": "1st Birthday Party Ideas",
+      "pins": [
+        "15 Sweet First Birthday Party Ideas",
+        "First Birthday Ideas That Keep the Day Simple",
+        "Planning a 1st Birthday? Start With These Ideas"
+      ]
+    },
+    {
+      "order": 10,
+      "slug": "party-games-for-kindergarteners",
+      "title": "Party Games for Kindergarteners",
+      "seoTitle": "15 Party Games for Kindergarteners That Are Easy to Explain",
+      "keyword": "party games for kindergarteners",
+      "volume": 2900,
+      "kd": 20,
+      "category": "Party Games",
+      "categoryPath": "celebrations/birthday-parties/party-games",
+      "board": "Party Games",
+      "pins": [
+        "15 Easy Party Games for Kindergarteners",
+        "Kindergarten Party Games Kids Can Actually Follow",
+        "Low-Prep Party Games for Ages 5–6"
+      ]
+    },
+    {
+      "order": 11,
+      "slug": "large-group-party-games",
+      "title": "Large Group Party Games",
+      "seoTitle": "15 Large Group Party Games That Keep Everyone Involved",
+      "keyword": "large group games",
+      "volume": 2400,
+      "kd": 17,
+      "category": "Party Games",
+      "categoryPath": "celebrations/birthday-parties/party-games",
+      "board": "Party Games",
+      "pins": [
+        "15 Large Group Party Games That Actually Work",
+        "Party Games for Big Groups Without Long Waits",
+        "Easy Large-Group Games for Birthdays"
+      ]
+    },
+    {
+      "order": 12,
+      "slug": "party-games-for-kids",
+      "title": "Party Games for Kids",
+      "seoTitle": "20 Party Games for Kids by Age, Space and Energy Level",
+      "keyword": "party games for kids",
+      "volume": 2400,
+      "kd": 24,
+      "category": "Party Games",
+      "categoryPath": "celebrations/birthday-parties/party-games",
+      "board": "Party Games",
+      "pins": [
+        "20 Party Games for Kids by Age and Space",
+        "Easy Birthday Party Games for Kids",
+        "Kids Party Games for Indoor and Outdoor Parties"
+      ]
+    }
+  ]
+}
