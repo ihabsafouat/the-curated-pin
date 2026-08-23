@@ -37,6 +37,8 @@
     "setup:priority10": "npm run db:migrate && npm run seo:seed:birthday && npm run audience:seed && npm run seo:simulate && npm run prod:audit",
     "launch:seed": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/seed-launch-content.mjs --status=draft",
     "launch:publish": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/publish-launch-content.mjs",
+    "growth:seed": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/seed-growth-content.mjs",
+    "growth:publish": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/publish-growth-content.mjs --all --confirm=publish-reviewed-growth",
     "pinterest:csv": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/generate-pinterest-csv.mjs",
     "setup:priority11": "npm run db:migrate && npm run seo:seed:birthday && npm run audience:seed && npm run launch:seed && npm run seo:simulate && npm run prod:audit"
   },

@@ -17,10 +17,10 @@ try {
     let id;
     if (current.rowCount) {
       id = current.rows[0].id;
-      await client.query(`UPDATE articles SET category_id=$2,category=$3,category_slug=$4,title=$5,dek=$6,image=$7,read_time=$8,sections_json='[]'::jsonb,blocks_json=$9::jsonb,status=$10,seo_title=$11,seo_description=$12,affiliate_url='',affiliate_label='',image_alt=$13,social_image=$14,canonical_path='',seo_index=TRUE,updated_at=CURRENT_TIMESTAMP,published_at=CASE WHEN $10='published' THEN COALESCE(published_at,CURRENT_TIMESTAMP) ELSE NULL END WHERE id=$1`,
+      await client.query(`UPDATE articles SET category_id=$2,category=$3,category_slug=$4,title=$5,dek=$6,image=$7,read_time=$8,sections_json='[]'::jsonb,blocks_json=$9::jsonb,status=$10,seo_title=$11,seo_description=$12,affiliate_url='',affiliate_label='',image_alt=$13,social_image=$14,canonical_path='',seo_index=TRUE,updated_at=CURRENT_TIMESTAMP,published_at=NULL WHERE id=$1`,
         [id,c.id,c.name,c.path,article.title,article.dek,article.image,article.readTime,JSON.stringify(article.blocks),requested,article.seoTitle,article.seoDescription,article.imageAlt,article.socialImage]);
     } else {
-      const inserted = await client.query(`INSERT INTO articles (author_id,category_id,slug,category,category_slug,title,dek,image,read_time,sections_json,blocks_json,status,seo_title,seo_description,affiliate_url,affiliate_label,image_alt,social_image,canonical_path,seo_index,published_at) VALUES (NULL,$1,$2,$3,$4,$5,$6,$7,$8,'[]'::jsonb,$9::jsonb,$10,$11,$12,'','',$13,$14,'',TRUE,CASE WHEN $10='published' THEN CURRENT_TIMESTAMP ELSE NULL END) RETURNING id`,
+      const inserted = await client.query(`INSERT INTO articles (author_id,category_id,slug,category,category_slug,title,dek,image,read_time,sections_json,blocks_json,status,seo_title,seo_description,affiliate_url,affiliate_label,image_alt,social_image,canonical_path,seo_index,published_at) VALUES (NULL,$1,$2,$3,$4,$5,$6,$7,$8,'[]'::jsonb,$9::jsonb,$10,$11,$12,'','',$13,$14,'',TRUE,NULL) RETURNING id`,
         [c.id,article.slug,c.name,c.path,article.title,article.dek,article.image,article.readTime,JSON.stringify(article.blocks),requested,article.seoTitle,article.seoDescription,article.imageAlt,article.socialImage]);
       id = inserted.rows[0].id;
     }

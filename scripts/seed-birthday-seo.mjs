@@ -86,7 +86,24 @@ try {
     );
   }
 
+  const uniqueLinks = new Map();
   for (const link of links) {
+    const key = JSON.stringify([link.source, link.target, link.anchor]);
+    const existing = uniqueLinks.get(key);
+    if (!existing) {
+      uniqueLinks.set(key, link);
+      continue;
+    }
+
+    uniqueLinks.set(key, {
+      ...existing,
+      semantic: Math.max(existing.semantic, link.semantic),
+      weight: Math.max(existing.weight, link.weight),
+      required: existing.required || link.required,
+    });
+  }
+
+  for (const link of uniqueLinks.values()) {
     const sourceId = pageIds.get(link.source);
     const targetId = pageIds.get(link.target);
     if (!sourceId || !targetId) throw new Error(`Unknown internal link page: ${link.source} -> ${link.target}`);
@@ -108,7 +125,7 @@ try {
   }
 
   await client.query("COMMIT");
-  process.stdout.write(`Seeded ${pages.length} SEO pages, ${keywords.length} keyword claims, ${links.length} internal links and ${backlinkAssets.length} linkable assets.\n`);
+  process.stdout.write(`Seeded ${pages.length} SEO pages, ${keywords.length} keyword claims, ${uniqueLinks.size} internal links and ${backlinkAssets.length} linkable assets.\n`);
 } catch (error) {
   await client.query("ROLLBACK");
   throw error;
