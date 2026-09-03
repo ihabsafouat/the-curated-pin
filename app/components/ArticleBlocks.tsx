@@ -82,6 +82,8 @@ export default function ArticleBlocks({ blocks, startIndex = 0, ideaStart = 0 }:
         return <aside className="productCtaBlock" key={block.id} data-analytics-impression="true" data-analytics-kind="product" data-analytics-placement={`block:${block.id}`} data-product-slug={siteSlug(block.url,"/shop/") || undefined} data-analytics-label={block.title}><OptionalImage src={block.image} alt={block.imageAlt}/><div><small>{block.eyebrow || "THE CURATED PIN SHOP"}</small><h3>{block.title}</h3><p>{block.body}</p>{block.price && <b>{block.price}</b>}<a href={block.url} data-analytics-kind="product" data-product-slug={siteSlug(block.url,"/shop/") || undefined} data-analytics-placement={`block:${block.id}`}>{block.cta} →</a></div></aside>;
       case "internal_link":
         return <aside className="richInternalLink" key={block.id}><small>{block.eyebrow || "KEEP PLANNING"}</small><h3>{block.title}</h3>{block.body && <p>{block.body}</p>}<a href={block.url} data-analytics-kind="internal" data-analytics-placement={`block:${block.id}`}>{block.anchor} →</a></aside>;
+      case "source_list":
+        return <aside className="sourceListBlock" key={block.id}><small>EDITORIAL SOURCES</small><h3>{block.title}</h3><ul>{block.items.map((item, itemIndex) => <li key={`${block.id}-${itemIndex}`}><a href={item.url} target="_blank" rel="noopener" data-analytics-kind="outbound" data-analytics-placement={`source:${block.id}`}><b>{item.label}</b><span>{item.publisher}</span><i>↗</i></a></li>)}</ul></aside>;
       case "faq":
         return <ArticleFaq key={block.id} title={block.title} items={block.items}/>;
       case "pinterest_asset":

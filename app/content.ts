@@ -25,6 +25,7 @@ export type ArticleBlock =
   | { id: string; type: "lead_magnet"; eyebrow: string; title: string; body: string; cta: string; url: string }
   | { id: string; type: "product_cta"; eyebrow: string; title: string; body: string; cta: string; url: string; price: string; image: string; imageAlt: string }
   | { id: string; type: "internal_link"; eyebrow: string; title: string; body: string; anchor: string; url: string }
+  | { id: string; type: "source_list"; title: string; items: Array<{ label: string; publisher: string; url: string }> }
   | { id: string; type: "faq"; title: string; items: Array<{ question: string; answer: string }> }
   | { id: string; type: "pinterest_asset"; title: string; image: string; imageAlt: string; pinTitle: string; pinDescription: string }
   | { id: string; type: "quote"; text: string; attribution: string }

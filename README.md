@@ -4,6 +4,10 @@ A full-stack Next.js editorial publication with reader accounts, a role-protecte
 
 This repository now uses the standard Next.js runtime and is designed to deploy cleanly to Netlify with Neon PostgreSQL. It does not require Cloudflare Workers, D1, Vinext, Wrangler, or a separate backend service.
 
+The September 2026 refocus keeps the traffic-producing Birthday library intact and makes Crochet/Crafts the only active expansion. Public navigation, bundled fallback content, deployment seeding, the sitemap and the SEO map now concentrate on those two collections.
+
+The completed Nails and Jewelry package is preserved for the future Aurora website, while the Wedding package is preserved for Wedding Gazette. Those articles and original assets are deliberately excluded from The Curated Pin's active publishing path. See `seo/CURATED_PIN_EDITORIAL_FOCUS.md` and `handoff/CONTENT_TRANSFER_MAP.md`.
+
 ## Stack
 
 - Next.js App Router
@@ -177,7 +181,7 @@ The repository includes `netlify.toml` with the standard Next.js settings:
 
 ```toml
 [build]
-  command = "npm run build"
+  command = "npm run deploy:prepare && npm run build"
   publish = ".next"
 ```
 
@@ -230,10 +234,17 @@ Push the repository to GitHub and import it into Netlify. Framework detection sh
 Typical settings:
 
 ```text
-Build command: npm run build
+Build command: npm run deploy:prepare && npm run build
 Publish directory: .next
 Node: 22
 ```
+
+The deploy preparation step is safe to re-run. With database credentials it applies
+the pending migrations, preserves every Birthday URL and syncs only the active Crochet
+launch content and SEO map. Without database credentials, Birthday and the five Crochet
+guides remain available from bundled fallback content. The active Crochet Pin graphics
+live in `public/pinterest/verticals/`; Aurora and Wedding assets remain packaged for
+their eventual brand-specific sites.
 
 ### 4. Bootstrap the admin
 
@@ -293,8 +304,9 @@ See [`PRIORITY_0.md`](./PRIORITY_0.md).
 ### Priority 1 — complete
 
 - Database-driven hierarchical taxonomy
-- `Celebrations -> Birthday Parties` active as the first vertical
-- Future Crafts / Crochet / Sewing / Style categories seeded inactive
+- `Celebrations -> Birthday Parties` remains the proven first collection
+- `Crafts -> Crochet` is the only active expansion
+- Sewing, Style, Nails, Jewelry and Weddings stay outside the public publishing path
 - Nested public category pages and breadcrumbs
 - Database-driven navigation and sitemap
 - Editor/admin taxonomy manager at `/studio/categories`

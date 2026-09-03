@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "deploy:prepare": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/prepare-deploy.mjs",
     "start": "next start",
     "test": "node --test tests/*.test.mjs",
     "check": "npm run typecheck && npm run lint && npm run test && npm run build",
@@ -19,6 +20,10 @@
     "env:check": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/check-env.mjs",
     "db:check": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/check-postgres.mjs",
     "seo:seed:birthday": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/seed-birthday-seo.mjs",
+    "seo:seed:verticals": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/seed-vertical-seo.mjs",
+    "verticals:seed": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/seed-vertical-content.mjs",
+    "weddings:media": "node scripts/generate-wedding-media.mjs",
+    "setup:verticals": "npm run db:migrate && npm run verticals:seed && npm run seo:seed:verticals && npm run seo:simulate",
     "seo:simulate": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/seo-simulate.mjs",
     "setup:priority2": "npm run db:migrate && npm run seo:seed:birthday && npm run seo:simulate",
     "setup:priority3": "npm run db:migrate && npm run seo:seed:birthday && npm run seo:simulate",
@@ -39,7 +44,9 @@
     "launch:publish": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/publish-launch-content.mjs",
     "growth:seed": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/seed-growth-content.mjs",
     "growth:publish": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/publish-growth-content.mjs --all --confirm=publish-reviewed-growth",
+    "growth:release": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/seed-birthday-growth-release.mjs",
     "pinterest:csv": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/generate-pinterest-csv.mjs",
+    "pinterest:release": "node scripts/generate-pinterest-release.mjs",
     "setup:priority11": "npm run db:migrate && npm run seo:seed:birthday && npm run audience:seed && npm run launch:seed && npm run seo:simulate && npm run prod:audit"
   },
   "dependencies": {

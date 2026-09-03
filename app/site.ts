@@ -1,11 +1,12 @@
 export const SITE_NAME = "The Curated Pin";
-export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, "");
+const configuredSiteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").trim();
+export const SITE_URL = (/^https?:\/\//i.test(configuredSiteUrl) ? configuredSiteUrl : `https://${configuredSiteUrl}`).replace(/\/$/, "");
 export const DEFAULT_SOCIAL_IMAGE = "/default-social.png";
 
 export const faqs = [
   {
     question: "What does The Curated Pin publish?",
-    answer: "The Curated Pin organizes useful, visual ideas into focused editorial collections. We are launching with celebrations and birthday parties, then expanding into crafts such as crochet and sewing as those libraries are ready.",
+    answer: "The Curated Pin organizes useful, visual ideas into focused Birthday and Crochet collections, with each guide built around a clear planning or making task.",
   },
   {
     question: "How do you choose products and recommendations?",

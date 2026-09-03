@@ -72,8 +72,24 @@ function displayDate(value: string) {
   return `Updated ${new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric" }).format(date)}`;
 }
 
-export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
+const articlePromiseOverrides: Record<string, { label: string; title: string; items: string[] }> = {
+  "teen-sleepover-party-ideas": { label: "COZY SLEEPOVER PLAN", title: "The setup, schedule and host checklist are all here.", items: ["12 attainable sleepover setups", "Evening-to-breakfast timeline", "Safety, snack and supply checklist"] },
+  "16th-birthday-party-ideas": { label: "SWEET 16 KEEPSAKE PLAN", title: "Build the guest moment before buying more decor.", items: ["Signature-board setup", "Memory-jar prompts and supplies", "Budget and party-flow checklist"] },
+  "18th-birthday-party-ideas": { label: "18TH BIRTHDAY PLAN", title: "Create a milestone keepsake guests can help make.", items: ["Memory-table setup", "Friendly note prompts", "15 celebration ideas by budget"] },
+  "backyard-party-games": { label: "BACKYARD GAME PLAN", title: "Choose the stations, gather the supplies and start playing.", items: ["12 low-prep games", "Setup and safety notes", "Mixed-age and weather backups"] },
+  "crochet-flower-bouquet-pattern": { label: "FREE CROCHET GUIDE", title: "Plan a bouquet that looks balanced from every angle.", items: ["Flower and leaf ratios", "Stem-height and color map", "Complete assembly sequence"] },
+  "easy-crochet-baby-blanket-pattern": { label: "FREE CROCHET GUIDE", title: "Plan the size and yarn before the first long row.", items: ["Materials and gauge math", "Finished measurements", "Border and troubleshooting notes"] },
+};
+
+function articlePromise(article: { slug: string; categoryPath: string }) {
+  if (articlePromiseOverrides[article.slug]) return articlePromiseOverrides[article.slug];
+  if (article.categoryPath.startsWith("crafts/crochet")) return { label: "FREE CROCHET GUIDE", title: "Make the project with fewer avoidable restarts.", items: ["Materials and measurements", "Step-by-step method", "Finishing and troubleshooting notes"] };
+  return { label: "PRACTICAL PARTY GUIDE", title: "Turn the saved idea into a party you can actually host.", items: ["Ideas organized for real spaces", "Budget and setup notes", "A quick planning checklist"] };
+}
+
+export default async function ArticlePage({ params, searchParams }: { params: Promise<{ slug: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const { slug } = await params;
+  const query = await searchParams;
   const article = await getArticleBySlug(slug);
   if (!article) notFound();
   const category = await getCategoryByPath(article.categoryPath);
@@ -104,6 +120,9 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   const canonicalPath = sameSiteCanonical(article.canonicalPath, `/article/${article.slug}`);
   const canonicalUrl = absoluteUrl(canonicalPath);
   const shareImage = socialImage(article.socialImage || article.image);
+  const promise = articlePromise(article);
+  const fromPinterest = query.utm_source === "pinterest";
+  const firstSection = headings[0]?.id ? `#${headings[0].id}` : "#guide-content";
   const articleSchema = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -135,10 +154,15 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
         <div><span>By <Link href={EDITORIAL_AUTHOR_PATH}>{EDITORIAL_AUTHOR_NAME}</Link></span><span>{article.readTime}</span><span>{displayDate(article.updatedAt)}</span></div>
       </header>
       <div className="articleHero shell"><MediaImage src={article.image} alt={article.imageAlt || article.title} variant="hero" fetchPriority="high" decoding="async" loading="eager" sizes="(max-width: 900px) 100vw, 1180px"/><span>Save-worthy ideas, carefully edited.</span></div>
+      <section className={`articlePromise shell${fromPinterest ? " fromPinterest" : ""}`} aria-label="What this guide includes">
+        <div><small>{fromPinterest ? "FROM YOUR PIN · " : ""}{promise.label}</small><h2>{promise.title}</h2></div>
+        <ul>{promise.items.map((item) => <li key={item}><span aria-hidden="true">✓</span>{item}</li>)}</ul>
+        <a href={firstSection}>Start the guide ↓</a>
+      </section>
       <ArticleUtilityBar slug={article.slug} title={article.title} canonicalUrl={canonicalUrl} imageUrl={shareImage}/>
       <div className="articleLayout shell">
         <aside className="articleTocAside"><ArticleGuideNav headings={headings} categoryPath={article.categoryPath} categoryName={article.category}/></aside>
-        <div className="articleBody">
+        <div className="articleBody" id="guide-content">
           {hasAffiliateContent && <p className="affiliateNote"><b>Affiliate disclosure:</b> This guide may contain paid links. If you buy through them, we may earn a commission at no extra cost to you. Recommendations and editorial choices remain ours. <a href="/editorial-policy">See our editorial policy.</a></p>}
           <p className="intro">{article.dek}</p>
           <ArticleBlocks blocks={blocksBeforeLead} startIndex={0} ideaStart={0}/>

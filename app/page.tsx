@@ -13,7 +13,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata = staticPageMetadata({
   title: "Ideas Worth Saving",
-  description: "Practical, reader-first guides for birthday parties, celebrations and creative projects—organized into focused topical collections.",
+  description: "Practical birthday ideas, party-planning guides and crochet projects—organized into focused, useful collections.",
   path: "/",
 });
 
@@ -68,7 +68,7 @@ export default async function Home() {
 
     <section className="hero shell">
       <p className="eyebrow"><i/> THE CURATED EDIT</p>
-      <div className="heroTitle"><h1>Ideas worth saving.<br/><em>Plans worth using.</em></h1><div className="heroPromise"><p>We turn broad inspiration into focused, practical guides. The first collection is built around birthday parties, with crafts and style joining only when their libraries are ready.</p><div className="heroCtas"><Link className="primaryCta" href="/category/celebrations/birthday-parties">Explore birthday ideas</Link><a className="secondaryCta" href="#newsletter">Get the Sunday Save →</a></div></div></div>
+      <div className="heroTitle"><h1>Ideas worth saving.<br/><em>Plans worth using.</em></h1><div className="heroPromise"><p>We turn birthday inspiration and handmade ideas into practical plans—with age-aware party guidance, usable checklists and crochet projects built to be finished.</p><div className="heroCtas"><Link className="primaryCta" href="/category/celebrations/birthday-parties">Explore birthday ideas</Link><Link className="secondaryCta" href="/category/crafts/crochet">Browse crochet projects →</Link></div></div></div>
 
       {feature ? <div className="featured">
         <Link className="lead" href={`/article/${feature.slug}`}>
@@ -82,7 +82,7 @@ export default async function Home() {
     <div className="trust"><div className="shell"><span><b>01</b> Focused topical collections</span><span><b>02</b> Clear affiliate disclosure</span><span><b>03</b> Reader-first recommendations</span></div></div>
 
     <section className="section shell" id="latest">
-      <div className="sectionHead"><div><small>FRESHLY CURATED</small><h2>{latest.length ? "New this week" : "The editorial queue is open"}</h2></div><Link href="/category/celebrations/birthday-parties">Browse birthday parties <Arrow/></Link></div>
+      <div className="sectionHead"><div><small>FRESHLY CURATED</small><h2>{latest.length ? "New this week" : "The editorial queue is open"}</h2></div><Link href="/category/crafts/crochet">Browse crochet projects <Arrow/></Link></div>
       {latest.length ? <div className="storyGrid">{latest.map((story, i) => <article key={story.title}><Link className="storyImage" href={`/article/${story.slug}`}><MediaImage src={story.image} alt={story.imageAlt || `Preview for ${story.title}`} variant="card" loading="lazy" decoding="async" sizes="(max-width: 720px) 45vw, 360px"/><b>0{i + 1}</b></Link><small>{story.category}</small><h3><Link href={`/article/${story.slug}`}>{story.title}</Link></h3><div className="meta"><span>{story.readTime}</span><Link href="/saved">Saved library →</Link></div></article>)}</div> : <div className="emptyEditorial"><p>The old demo categories are archived rather than deleted. New articles will appear here as the Birthday Parties silo is published.</p><Link href="/category/celebrations/birthday-parties">Explore the Birthday Party structure →</Link></div>}
     </section>
 

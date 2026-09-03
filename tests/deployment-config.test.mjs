@@ -16,7 +16,7 @@ test("uses the standard Next.js lifecycle", () => {
 });
 
 test("Netlify is configured for the Next.js build output", () => {
-  assert.match(netlify, /command = "npm run build"/);
+  assert.match(netlify, /command = "npm run deploy:prepare && npm run build"/);
   assert.match(netlify, /publish = "\.next"/);
 });
 
