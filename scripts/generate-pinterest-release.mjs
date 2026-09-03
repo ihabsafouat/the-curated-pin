@@ -66,12 +66,20 @@ const outboundStrategy = {
   "teen-sleepover-party-ideas": { pins: ["Cozy Teen Sleepover Setup + Simple Timeline", "Teen Sleepover Checklist: Beds, Snacks + Breakfast", "Copy This Cozy Birthday Sleepover Plan"], benefit: "sleep-station ideas, an evening-to-breakfast timeline, snack baskets and a practical host checklist" },
   "backyard-party-games": { pins: ["12 Backyard Party Games + Easy Setup Notes", "Backyard Birthday Games: Supplies, Stations + Rules", "Copy This 3-Station Backyard Game Plan"], benefit: "12 low-prep games, supply notes, station layouts, mixed-age options and weather backups" },
   "teen-birthday-party-games": { pins: ["12 Teen Party Games They Will Actually Play", "Teen Birthday Games: Prompts, Teams + Setup", "Low-Pressure Teen Party Games for Real Groups"], benefit: "12 non-cringe games, prompt ideas, team setup and a choose-the-right-game checklist" },
-  "first-birthday-themes-for-girls": { pins: ["12 Sweet First Birthday Themes + Simple Setups", "One Sweet Garden: First Birthday Plan", "First Birthday Themes: Colors, Decor + Checklist"], benefit: "12 themes, simple color palettes, baby-safe setup notes and a realistic planning checklist" },
-  "first-birthday-themes-for-boys": { pins: ["12 First Birthday Themes Beyond Basic Blue", "Teddy Bear First Birthday: Simple Setup Plan", "First Birthday Themes: Colors, Decor + Checklist"], benefit: "12 themes, attainable decor plans, baby-safe setup notes and a realistic planning checklist" },
+  "first-birthday-themes-for-girls": { pins: ["12 Sweet First Birthday Themes + Simple Setups", "One Sweet Garden: First Birthday Plan", "First Birthday Themes for Girls: Colors + Checklist"], benefit: "12 themes, simple color palettes, baby-safe setup notes and a realistic planning checklist" },
+  "first-birthday-themes-for-boys": { pins: ["12 First Birthday Themes Beyond Basic Blue", "Teddy Bear First Birthday: Simple Setup Plan", "First Birthday Themes for Boys: Colors + Checklist"], benefit: "12 themes, attainable decor plans, baby-safe setup notes and a realistic planning checklist" },
   "crochet-flower-bouquet-pattern": { pins: ["Crochet Flower Bouquet: Ratio + Assembly Map", "Crochet Bouquet Pattern: Stems, Leaves + Layout", "Make a Balanced Crochet Flower Bouquet"], benefit: "flower ratios, three stem heights, leaf placement, color plans and the full assembly sequence" },
   "easy-crochet-baby-blanket-pattern": { pins: ["Easy Crochet Baby Blanket: Size + Yarn Guide", "Beginner Baby Blanket: Gauge, Rows + Border", "Crochet a Baby Blanket That Finishes Flat"], benefit: "materials, gauge math, finished measurements, row planning, border notes and troubleshooting" },
   "easy-crochet-flowers-for-beginners": { pins: ["Free 5-Petal Crochet Flower: Exact Stitch Repeat", "Easy Crochet Flower: Materials + Finishing", "Make This Beginner Crochet Flower"], benefit: "the complete five-petal stitch sequence, materials, finishing steps and three easy variations" },
   "crochet-blanket-size-chart-yarn-estimator": { pins: ["Crochet Blanket Size Chart + Yarn Estimator", "Blanket Sizes: Starting Chain, Yarn + Border Math", "Plan Your Crochet Blanket Before You Start"], benefit: "finished-size targets, gauge math, starting-chain guidance, yarn estimates and border planning" },
+};
+
+const birthdayChecklistTitles = {
+  "balloon-decorating-ideas-for-birthday-party": "Birthday Balloon Decor: Easy Setup + Checklist",
+  "birthday-party-ideas-at-home": "At-Home Birthday Party: Easy Setup + Checklist",
+  "adult-birthday-party-ideas": "Adult Birthday Party: Easy Setup + Checklist",
+  "40th-birthday-party-ideas": "40th Birthday Ideas: Meaningful Milestone Checklist",
+  "50th-birthday-party-ideas": "50th Birthday Ideas: Memorable Setup + Checklist",
 };
 
 function titleVariants(article, channel) {
@@ -88,7 +96,8 @@ function titleVariants(article, channel) {
   return [
     cleanTitle,
     `${keyword.replace(/\b\w/g, (letter) => letter.toUpperCase())} Worth Saving`,
-    `Planning a Birthday? Try These Ideas`,
+    birthdayChecklistTitles[article.slug]
+      || `${keyword.replace(/\b\w/g, (letter) => letter.toUpperCase())}: Setup Ideas + Checklist`,
   ];
 }
 
@@ -216,6 +225,21 @@ entryRows.forEach((row,index)=>{
   planRows.push(row);
 });
 
+const duplicateTitles = [...new Set(planRows.map((row) => row.title))]
+  .filter((title) => planRows.filter((row) => row.title === title).length > 1);
+if (duplicateTitles.length) throw new Error(`Pinterest requires unique titles per upload: ${duplicateTitles.join(", ")}`);
+
+// Pinterest's first upload accepted 93 rows and rejected these six duplicate-title rows.
+// Keep this retry file separate so accepted Pins are not uploaded twice.
+const retryRows = planRows.filter((row) => row.variant === 3 && [
+  "first-birthday-themes-for-boys",
+  "balloon-decorating-ideas-for-birthday-party",
+  "birthday-party-ideas-at-home",
+  "adult-birthday-party-ideas",
+  "40th-birthday-party-ideas",
+  "50th-birthday-party-ideas",
+].includes(row.slug));
+
 function writeCsv(fileName, rows) {
   const values = rows.map((row) => [row.title,row.mediaUrl,row.board,row.thumbnail,row.description,row.link,row.publishDate,row.keywords]);
   return writeFile(`${releaseDir}/${fileName}`, `\uFEFF${[csvHeaders,...values].map((row)=>row.map(csvCell).join(",")).join("\r\n")}\r\n`);
@@ -225,6 +249,7 @@ await Promise.all([
   writeCsv("pinterest-bulk-crochet.csv", planRows.filter((row) => row.channel === "crochet")),
   writeCsv("pinterest-bulk-birthday.csv", planRows.filter((row) => row.channel === "birthday")),
   writeCsv("pinterest-bulk-all.csv", planRows),
+  writeCsv("pinterest-bulk-retry-6.csv", retryRows),
   writeFile(`${releaseDir}/pinterest-pin-plan.json`, `${JSON.stringify(planRows, null, 2)}\n`),
 ]);
-process.stdout.write(`Generated ${planRows.length} Pinterest rows and images at 30 per day: ${crochet.length * 3} Crochet + ${(birthdayLaunch.length + birthdayGrowth.length) * 3} Birthday.\n`);
+process.stdout.write(`Generated ${planRows.length} unique-title Pinterest rows and images at 30 per day, plus ${retryRows.length} corrected retry rows: ${crochet.length * 3} Crochet + ${(birthdayLaunch.length + birthdayGrowth.length) * 3} Birthday.\n`);
