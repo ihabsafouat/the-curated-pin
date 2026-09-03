@@ -47,6 +47,7 @@
     "growth:release": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/seed-birthday-growth-release.mjs",
     "pinterest:csv": "node --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/generate-pinterest-csv.mjs",
     "pinterest:release": "node scripts/generate-pinterest-release.mjs",
+    "pinterest:editorial": "node scripts/build-editorial-pin-assets.mjs",
     "setup:priority11": "npm run db:migrate && npm run seo:seed:birthday && npm run audience:seed && npm run launch:seed && npm run seo:simulate && npm run prod:audit"
   },
   "dependencies": {
