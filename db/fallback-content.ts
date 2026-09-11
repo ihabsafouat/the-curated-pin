@@ -2,6 +2,7 @@ import type { Category, LeadMagnet, ManagedArticle } from "./types";
 import { launchArticles } from "../launch/birthday-launch-content.mjs";
 import { growthArticles } from "../launch/birthday-growth-content.mjs";
 import { verticalArticles } from "../launch/vertical-launch-content.mjs";
+import { halloweenCrochetArticles } from "../launch/halloween-crochet-content.mjs";
 
 const FALLBACK_DATE = "2026-08-21T00:00:00.000Z";
 
@@ -358,7 +359,7 @@ export function fallbackCategoryChildren(parentId: number): Category[] {
     .sort((a, b) => a.sortOrder - b.sortOrder);
 }
 
-const bundledArticles = [...launchArticles, ...growthArticles, ...verticalArticles] as BundledLaunchArticle[];
+const bundledArticles = [...launchArticles, ...growthArticles, ...verticalArticles, ...halloweenCrochetArticles] as BundledLaunchArticle[];
 
 export const fallbackLaunchArticles: ManagedArticle[] = bundledArticles.map((article, index) => {
   const category = fallbackCategory(article.categoryPath);

@@ -11,7 +11,7 @@ const contentSecurityPolicy = [
   "img-src 'self' data: https:",
   "font-src 'self' data:",
   "style-src 'self' 'unsafe-inline'",
-  "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.clarity.ms https://challenges.cloudflare.com",
+  `script-src 'self' 'unsafe-inline'${isProduction ? "" : " 'unsafe-eval'"} https://www.googletagmanager.com https://www.clarity.ms https://challenges.cloudflare.com`,
   "connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://www.clarity.ms https://*.clarity.ms https://c.bing.com https://challenges.cloudflare.com https://api.cloudinary.com",
   "frame-src 'self' https://challenges.cloudflare.com",
   ...(isProduction ? ["upgrade-insecure-requests"] : []),
