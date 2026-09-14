@@ -78,8 +78,8 @@ export function InlineNewsletter() {
   return <SignupForm source="footer" interestKey="general"/>;
 }
 
-export function LeadMagnetSignup({ magnet, source, articleSlug, categoryPath, compact = false }: { magnet: PublicLeadMagnet; source: string; articleSlug?: string; categoryPath?: string; compact?: boolean }) {
-  return <SignupForm source={source} magnet={magnet} articleSlug={articleSlug} categoryPath={categoryPath} compact={compact} showName/>;
+export function LeadMagnetSignup({ magnet, source, articleSlug, categoryPath }: { magnet: PublicLeadMagnet; source: string; articleSlug?: string; categoryPath?: string; compact?: boolean }) {
+  return <a className="downloadButton" href={`/free/${magnet.slug}`} data-analytics-kind="lead_magnet" data-lead-magnet={magnet.slug} data-analytics-placement={source} data-article-slug={articleSlug} data-category-path={categoryPath}>Download</a>;
 }
 
 export function ContextualLeadMagnet({ magnet, source, articleSlug, categoryPath }: { magnet: PublicLeadMagnet; source: string; articleSlug?: string; categoryPath?: string }) {

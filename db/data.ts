@@ -6,6 +6,8 @@ import type { AnalyticsSummary, ArticleInput, ManagedArticle } from "./types";
 import { databaseIsConfigured } from "./client";
 import { fallbackLaunchArticles } from "./fallback-content";
 
+const LOCAL_CONTENT_SLUGS = new Set(["crochet-pumpkin-pattern", "crochet-ghost-pattern", "crochet-bat-amigurumi-pattern", "crochet-dinosaur-pattern", "halloween-crochet-plushie-collection"]);
+
 export type { AnalyticsSummary, ArticleInput, ManagedArticle } from "./types";
 
 type ArticleRow = {
@@ -118,7 +120,7 @@ export async function getPublishedArticlesByCategoryPath(path: string): Promise<
 
 export async function getArticleBySlug(slug: string): Promise<ManagedArticle | null> {
   const bundled = fallbackLaunchArticles.find((article) => article.slug === slug) ?? null;
-  if (!databaseIsConfigured()) return bundled;
+  if (!databaseIsConfigured() || LOCAL_CONTENT_SLUGS.has(slug)) return bundled;
   try {
     const row = await queryOne<ArticleRow>(
       `${ARTICLE_SELECT} WHERE a.slug = ? AND a.status = 'published' AND c.status = 'active' LIMIT 1`,
