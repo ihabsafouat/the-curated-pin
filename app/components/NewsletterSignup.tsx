@@ -74,6 +74,10 @@ function SignupForm({ source, compact = false, onSuccess, magnet, interestKey, a
   </form>;
 }
 
+export function EmailGateSignup({ magnet, source }: { magnet: PublicLeadMagnet; source: string }) {
+  return <SignupForm source={source} magnet={magnet} showName/>;
+}
+
 export function InlineNewsletter() {
   return <SignupForm source="footer" interestKey="general"/>;
 }
