@@ -6,7 +6,8 @@ import type { AnalyticsSummary, ArticleInput, ManagedArticle } from "./types";
 import { databaseIsConfigured } from "./client";
 import { fallbackLaunchArticles } from "./fallback-content";
 
-const LOCAL_CONTENT_SLUGS = new Set(["crochet-pumpkin-pattern", "crochet-ghost-pattern", "crochet-bat-amigurumi-pattern", "crochet-dinosaur-amigurumi-pattern", "crochet-bralette-pattern", "halloween-crochet-plushie-collection"]);
+const LOCAL_CONTENT_SLUGS = new Set(["crochet-pumpkin-pattern", "crochet-ghost-pattern", "crochet-bat-amigurumi-pattern", "crochet-dinosaur-pattern", "crochet-dinosaur-amigurumi-pattern", "crochet-bralette-pattern", "halloween-crochet-plushie-collection"]);
+const LOCAL_SLUG_ALIASES: Record<string, string> = { "crochet-dinosaur-pattern": "crochet-dinosaur-amigurumi-pattern" };
 
 export type { AnalyticsSummary, ArticleInput, ManagedArticle } from "./types";
 
@@ -95,6 +96,7 @@ function withLocalContent(articles: ManagedArticle[], path?: string): ManagedArt
   const updates = fallbackLaunchArticles.filter(article => LOCAL_CONTENT_SLUGS.has(article.slug) &&
     (!path || article.categoryPath === path || article.categoryPath.startsWith(`${path}/`)));
   const bySlug = new Map(updates.map(article => [article.slug, article]));
+  for (const [alias, canonical] of Object.entries(LOCAL_SLUG_ALIASES)) { const target = bySlug.get(canonical); if (target) bySlug.set(alias, { ...target, slug: alias }); }
   const merged = articles.map(article => bySlug.get(article.slug) ?? article);
   const existing = new Set(articles.map(article => article.slug));
   return [...merged, ...updates.filter(article => !existing.has(article.slug))];
@@ -129,7 +131,8 @@ export async function getPublishedArticlesByCategoryPath(path: string): Promise<
 }
 
 export async function getArticleBySlug(slug: string): Promise<ManagedArticle | null> {
-  const bundled = fallbackLaunchArticles.find((article) => article.slug === slug) ?? null;
+  const resolvedSlug = LOCAL_SLUG_ALIASES[slug] ?? slug;
+  const bundled = fallbackLaunchArticles.find((article) => article.slug === resolvedSlug) ?? null;
   if (!databaseIsConfigured() || LOCAL_CONTENT_SLUGS.has(slug)) return bundled;
   try {
     const row = await queryOne<ArticleRow>(
