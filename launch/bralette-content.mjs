@@ -1,34 +1,235 @@
-const slug="crochet-bralette-pattern";
-const title="How To Crochet A Stylish Bralette Top: The Perfect Handmade Summer Project";
-const dek="Create a beautiful handmade crochet bralette with this easy wearable pattern. Perfect for summer outfits, festivals, and crochet lovers who want stylish DIY clothing.";
-const base="/article-media/crochet/bralette-";
-const images=Array.from({length:10},(_,i)=>({url:`${base}${i+1}.png`,alt:"Woman wearing a handmade crochet bralette top with modern summer fashion style",caption:"Balcony Bralette crochet project reference."}));
-const text=[
-<<<<<<< HEAD
-["Why Crochet Clothing Is Becoming So Popular","Handmade crochet fashion has moved from a niche craft into a practical slow-fashion choice. A crochet top can be made in the exact colour, length and fit you prefer, while the breathable stitches make it especially useful in warm weather. Making your own garment also helps you understand construction, tension and fit instead of relying on a standard store size. This bralette is a rewarding first wearable project because the shapes are manageable, the materials are accessible and every finished row gives you visible progress."],
-["Meet The Balcony Bralette Crochet Pattern","The Balcony Bralette is designed as an approachable wearable for makers who want to move beyond scarves and small accessories. Its clean texture keeps the focus on the silhouette, while the under-bust band gives the top structure and helps it sit securely. The pattern can be styled on its own for a festival or beach look, or layered over a blouse, shirt or lightweight dress for everyday wear. Adjustable sizing makes it easier to plan a fit that feels personal rather than generic."],
-["Pattern Details","The pattern uses Paintbox Yarns Cotton 4 Ply with 3mm and 3.5mm crochet hooks. Before beginning, take accurate chest and under-bust measurements and compare them with the pattern sizing. The supportive band is intentionally made with minimal stretch, so your measurements and crochet tension matter more than simply choosing your usual clothing size. Make a small gauge sample, keep your edges even and check the band around your body before completing the cups."],
-["Materials Needed For This Crochet Top","Gather Paintbox Yarns Cotton 4 Ply or a similar lightweight cotton yarn, 3mm and 3.5mm crochet hooks, scissors and a large-eyed needle. A tape measure, stitch markers and a row counter are also useful when working through shaping. Cotton is a strong choice because it is breathable, holds stitch definition clearly and is comfortable against the skin. Keep your yarn label nearby so you can check washing instructions after finishing."],
-["A Perfect Summer Crochet Project","Wear this bralette with high-waisted jeans, linen trousers, skirts or shorts. For a beach holiday, layer it with an oversized button-down and woven accessories; for a festival, add a flowing skirt, boots and handmade jewellery. A neutral colour creates a versatile everyday top, while bright cotton shades make the design feel playful. If you prefer more coverage, place it over a lightweight camisole or under an open shirt."],
-["Customize Your Handmade Crochet Bralette","Experiment with solid neutrals, two-colour stripes or a carefully chosen contrast trim. You can adjust the visual character with a scalloped edge, small ties, a longer band or matching crochet accessories such as a headband or mini bag. Always test a change on a sample first, because yarn weight and added details can affect the fit. Photograph your finished top in natural light so you can record the colour combination for future projects."],
-=======
-["Why Crochet Clothing Is Becoming So Popular","Handmade crochet fashion lets makers create unique pieces that cannot be found in ordinary stores. Crochet tops, bralettes and summer garments are ideal slow-fashion projects."],
-["Meet The Balcony Bralette Crochet Pattern","The Balcony Bralette is an easy crochet wearable with a comfortable fit, clean texture and adjustable sizing. It works for summer outfits, layering and casual looks."],
-["Pattern Details","The pattern uses Paintbox Yarns Cotton 4 Ply with 3mm and 3.5mm crochet hooks. Its supportive under-bust band is designed for a comfortable fit with minimal stretch, and the size range covers a wide range of chest measurements."],
-["Materials Needed For This Crochet Top","Gather cotton yarn, 3mm and 3.5mm crochet hooks, scissors and a large-eyed needle. Cotton yarn keeps the finished top lightweight and comfortable in warm weather."],
-["A Perfect Summer Crochet Project","Wear this bralette with high-waisted jeans, skirts or shorts, or use it as a layering piece for beach days, festivals and vacations."],
-["Customize Your Handmade Crochet Bralette","Experiment with yarn colours, add details or make matching accessories to create a personalized handmade wardrobe."],
->>>>>>> e88740530d3cce5e62bc313c6f53c101e91ebdae
+export const braletteArticles = [
+  {
+    "slug": "crochet-bralette-pattern",
+    "categoryPath": "crafts/crochet",
+    "title": "Why Pink Crochet Bralettes Are the It-Girl Top of Summer (And How to Style, Choose Yarn, and Care for Yours)",
+    "dek": "Explore pink crochet bralette styling, yarn choices and care tips for your handmade summer wardrobe.",
+    "readTime": "7 min read",
+    "seoTitle": "Why Pink Crochet Bralettes Are the It-Girl Top of Summer (And How to Style, Choose Yarn, and Care for Yours)",
+    "seoDescription": "Explore pink crochet bralette styling, yarn choices and care tips for your handmade summer wardrobe.",
+    "image": "/article-media/crochet/bralette-1.webp",
+    "imageAlt": "Why Pink Crochet Bralettes Are the It-Girl Top of Summer (And How to Style, Choose Yarn, and Care for Yours)",
+    "socialImage": "/article-media/crochet/bralette-1.webp",
+    "primaryKeyword": "crochet bralette pattern",
+    "secondaryKeywords": [],
+    "blocks": [
+      {
+        "id": "crochet-bralette-pattern-updated-0",
+        "type": "paragraph",
+        "text": "If your feed has felt like one long scroll of pastel yarn and scalloped necklines lately, you're not imagining it. The **pink crochet bralette** has become one of the defining pieces of the current handmade-fashion wave, and it's easy to see why. It sits at the intersection of three things shoppers can't get enough of right now: **crochet fashion**, **Y2K-inspired silhouettes**, and **DIY-friendly summer style**. Whether you're a maker searching for your next **crochet bralette pattern** or a fashion lover hunting for the perfect **DIY crochet top** to wear this season, here's everything you need to know about the trend that's taking over Pinterest boards, TikTok \"what I made\" videos, and festival wardrobes alike."
+      },
+      {
+        "id": "crochet-bralette-pattern-updated-1",
+        "type": "image",
+        "url": "/article-media/crochet/bralette-1.webp",
+        "alt": "Pink crochet bralette styling — view 1"
+      },
+      {
+        "id": "crochet-bralette-pattern-updated-2",
+        "type": "heading",
+        "level": 2,
+        "text": "Why Crochet Bralettes Are Having a Major Moment"
+      },
+      {
+        "id": "crochet-bralette-pattern-updated-3",
+        "type": "paragraph",
+        "text": "Crochet tops aren't new — they've cycled through fashion since the '70s — but the current resurgence has a distinctly modern edge. A few reasons this trend has real staying power:"
+      },
+      {
+        "id": "crochet-bralette-pattern-updated-4",
+        "type": "bullets",
+        "items": [
+          "**The handmade fashion movement.** Consumers are increasingly drawn to slow fashion and visible craftsmanship. A crochet bralette signals \"made with intention,\" not mass-produced.",
+          "**Instagram- and TikTok-friendly texture.** The open stitchwork, scalloped edges, and dimensional texture of crochet photograph beautifully, which is a big part of why **pink crochet tops** keep going viral.",
+          "**Festival and vacation wardrobes.** Crochet bralettes layer effortlessly under open shirts, kimonos, and linen jackets — exactly the kind of breezy, warm-weather styling that dominates summer content.",
+          "**The DIY boom.** More people than ever are picking up a hook again, and a **crochet bralette pattern** is one of the most requested beginner-to-intermediate projects because it's quick to finish and instantly wearable."
+        ]
+      },
+      {
+        "id": "crochet-bralette-pattern-updated-5",
+        "type": "paragraph",
+        "text": "Put those together and you get a piece that works equally well as a finished garment to buy, a pattern to crochet yourself, or inspiration to riff on with your own design."
+      },
+      {
+        "id": "crochet-bralette-pattern-updated-6",
+        "type": "image",
+        "url": "/article-media/crochet/bralette-2.webp",
+        "alt": "Pink crochet bralette styling — view 2"
+      },
+      {
+        "id": "crochet-bralette-pattern-updated-7",
+        "type": "heading",
+        "level": 2,
+        "text": "Styling a Pink Crochet Bralette: From Beach to Brunch"
+      },
+      {
+        "id": "crochet-bralette-pattern-updated-8",
+        "type": "paragraph",
+        "text": "One of the best things about this piece is its versatility. Here are the styling directions getting the most traction this season:"
+      },
+      {
+        "id": "crochet-bralette-pattern-updated-9",
+        "type": "heading",
+        "level": 3,
+        "text": "1. Layered under an open shirt or shacket"
+      },
+      {
+        "id": "crochet-bralette-pattern-updated-10",
+        "type": "paragraph",
+        "text": "The classic pairing — a soft pink bralette peeking out from an unbuttoned flannel or linen shirt — remains the single most popular way to wear this piece. It softens the look, adds coverage options, and works from daytime errands to golden-hour photos."
+      },
+      {
+        "id": "crochet-bralette-pattern-updated-11",
+        "type": "heading",
+        "level": 3,
+        "text": "2. With high-waisted denim or a linen skirt"
+      },
+      {
+        "id": "crochet-bralette-pattern-updated-12",
+        "type": "paragraph",
+        "text": "Pair your bralette with high-rise jeans, wide-leg trousers, or a flowy cotton maxi skirt for a \"your midriff, your rules\" summer outfit that still feels put-together rather than beachwear-only."
+      },
+      {
+        "id": "crochet-bralette-pattern-updated-13",
+        "type": "heading",
+        "level": 3,
+        "text": "3. As festival wear"
+      },
+      {
+        "id": "crochet-bralette-pattern-updated-14",
+        "type": "paragraph",
+        "text": "Crochet bralettes are a festival-season staple — worn alone or layered with a fringe kimono, paired with denim shorts, and finished with layered jewelry."
+      },
+      {
+        "id": "crochet-bralette-pattern-updated-15",
+        "type": "heading",
+        "level": 3,
+        "text": "4. Under a blazer for an unexpected contrast"
+      },
+      {
+        "id": "crochet-bralette-pattern-updated-16",
+        "type": "paragraph",
+        "text": "For a more elevated, editorial take, style your bralette under a tailored blazer with nothing but the top button (or none at all) closed. Soft crochet against structured tailoring is a favorite among fashion stylists for a reason — the texture contrast does all the work."
+      },
+      {
+        "id": "crochet-bralette-pattern-updated-17",
+        "type": "heading",
+        "level": 3,
+        "text": "5. As a swim cover-up layer"
+      },
+      {
+        "id": "crochet-bralette-pattern-updated-18",
+        "type": "paragraph",
+        "text": "Because most crochet tops have some natural stretch and breathability, they double beautifully as a cover-up over a swimsuit for a beach-to-boardwalk transition."
+      },
+      {
+        "id": "crochet-bralette-pattern-updated-19",
+        "type": "image",
+        "url": "/article-media/crochet/bralette-3.webp",
+        "alt": "Pink crochet bralette styling — view 3"
+      },
+      {
+        "id": "crochet-bralette-pattern-updated-20",
+        "type": "heading",
+        "level": 2,
+        "text": "Choosing the Right Yarn for a Crochet Bralette"
+      },
+      {
+        "id": "crochet-bralette-pattern-updated-21",
+        "type": "paragraph",
+        "text": "If you're making your own rather than buying finished, yarn choice will make or break both the fit and the finished texture. A few things to consider:"
+      },
+      {
+        "id": "crochet-bralette-pattern-updated-22",
+        "type": "bullets",
+        "items": [
+          "**Fiber content matters more than usual.** Because a bralette needs to hold shape close to the body, a yarn with structure — like a good **cotton 4-ply** — is generally favored over anything too drapey or too stretchy. Cotton blends give clean stitch definition and breathe well in warm weather, which is exactly what you want against skin.",
+          "**Weight and gauge.** A 4-ply (fingering-to-sport weight) yarn worked at a tight gauge is popular for bralettes because it creates a fabric dense enough for support without feeling heavy or bulky.",
+          "**Color considerations.** Solid pastels (think blush, bubblegum, and flamingo pink) remain the most searched and most photographed shades, though variegated cottons are trending for a more artisanal look.",
+          "**Stitch-friendly yarn.** Look for a smooth, evenly spun yarn — fuzzy or highly textured novelty yarns can obscure the very stitch detail (like back-loop-only single crochet rows) that gives these tops their signature ribbed, structured look."
+        ]
+      },
+      {
+        "id": "crochet-bralette-pattern-updated-23",
+        "type": "image",
+        "url": "/article-media/crochet/bralette-4.webp",
+        "alt": "Pink crochet bralette styling — view 4"
+      },
+      {
+        "id": "crochet-bralette-pattern-updated-24",
+        "type": "heading",
+        "level": 2,
+        "text": "Basic Care Instructions for Your Crochet Bralette"
+      },
+      {
+        "id": "crochet-bralette-pattern-updated-25",
+        "type": "paragraph",
+        "text": "Handmade cotton crochet pieces need a little more care than your average t-shirt, but it's a small effort for a much longer lifespan."
+      },
+      {
+        "id": "crochet-bralette-pattern-updated-26",
+        "type": "bullets",
+        "items": [
+          "**Hand wash when possible.** Cold water and a gentle detergent will protect both the stitch definition and the color, especially with pink dye lots that can be prone to fading.",
+          "**Never wring it out.** Twisting or wringing distorts crochet stitches permanently. Instead, gently press out excess water in a towel.",
+          "**Lay flat to dry.** Hanging a wet crochet garment stretches it out of shape, particularly around the straps and neckline — always dry flat, reshaping gently as it air-dries.",
+          "**Block as needed.** If the piece loses its shape over time, a light steam block (or a wet block with pins) can restore even stitches and the original silhouette.",
+          "**Store folded, not hung.** Like most knit and crochet garments, hanging causes shoulder and strap stretching over time — fold and store in a drawer instead."
+        ]
+      },
+      {
+        "id": "crochet-bralette-pattern-updated-27",
+        "type": "image",
+        "url": "/article-media/crochet/bralette-5.webp",
+        "alt": "Pink crochet bralette styling — view 5"
+      },
+      {
+        "id": "crochet-bralette-pattern-updated-28",
+        "type": "heading",
+        "level": 2,
+        "text": "Final Thoughts: A Trend With Real Longevity"
+      },
+      {
+        "id": "crochet-bralette-pattern-updated-29",
+        "type": "paragraph",
+        "text": "Unlike many micro-trends that disappear after one season, the pink crochet bralette has the kind of broad appeal that tends to stick around: it's wearable across body types, it photographs well, it's DIY-friendly for the growing maker community, and it fits effortlessly into the wider crochet-fashion and cottagecore-adjacent aesthetics that show no sign of slowing down. Whether you're browsing for your next **DIY crochet top** project or simply building out your **summer crochet fashion** wardrobe, this is one trend worth investing real yarn (and time) into."
+      },
+      {
+        "id": "crochet-bralette-pattern-updated-30",
+        "type": "gallery",
+        "title": "Project inspiration",
+        "images": [
+          {
+            "url": "/article-media/crochet/bralette-6.webp",
+            "alt": "Why Pink Crochet Bralettes Are the It-Girl Top of Summer (And How to Style, Choose Yarn, and Care for Yours) — view 6"
+          },
+          {
+            "url": "/article-media/crochet/bralette-7.webp",
+            "alt": "Why Pink Crochet Bralettes Are the It-Girl Top of Summer (And How to Style, Choose Yarn, and Care for Yours) — view 7"
+          },
+          {
+            "url": "/article-media/crochet/bralette-8.webp",
+            "alt": "Why Pink Crochet Bralettes Are the It-Girl Top of Summer (And How to Style, Choose Yarn, and Care for Yours) — view 8"
+          },
+          {
+            "url": "/article-media/crochet/bralette-9.webp",
+            "alt": "Why Pink Crochet Bralettes Are the It-Girl Top of Summer (And How to Style, Choose Yarn, and Care for Yours) — view 9"
+          },
+          {
+            "url": "/article-media/crochet/bralette-10.webp",
+            "alt": "Why Pink Crochet Bralettes Are the It-Girl Top of Summer (And How to Style, Choose Yarn, and Care for Yours) — view 10"
+          }
+        ]
+      },
+      {
+        "id": "crochet-bralette-pattern-updated-31",
+        "type": "lead_magnet",
+        "eyebrow": "FREE CROCHET PATTERN",
+        "title": "Download the crochet pattern",
+        "body": "Get the pattern and more crochet inspiration.",
+        "cta": "Download",
+        "url": "/free/crochet-bralette-pattern"
+      }
+    ]
+  }
 ];
-const blocks=[]; let n=0; const add=(type,x)=>blocks.push({id:`${slug}-${++n}`,type,...x});
-add('paragraph',{text:"Crochet fashion has become one of the most creative ways to express personal style. Instead of buying another basic summer top, create something unique with your own hands. This Balcony Bralette combines comfort, simplicity and modern handmade fashion."});
-text.forEach(([heading,body],i)=>{add('heading',{level:2,text:heading});add('paragraph',{text:body});if(i<images.length)add('image',{url:images[i].url,alt:images[i].alt,caption:images[i].caption});});
-add('bullets',{title:'Why you will love this pattern',items:['Wearable handmade fashion piece','Beginner-friendly crochet clothing project','Perfect for summer wardrobes','Customizable colours','A great introduction to crochet garments']});
-add('table',{title:'Pattern preview',headers:['Detail','Information'],rows:[['Difficulty','Easy'],['Yarn','Paintbox Yarns Cotton 4 Ply'],['Hooks','3mm and 3.5mm'],['Finished size','Chest sizes from 63 cm to 124 cm depending on size selected'],['Best for','Summer outfits, beach vacations and festival fashion']]});
-<<<<<<< HEAD
-add('faq',{title:'Frequently asked questions',items:[{question:'Is this crochet bralette pattern beginner friendly?',answer:'Yes. It is classified as easy and suits crocheters making their first wearable garment, especially makers familiar with basic stitches and counting.'},{question:'What yarn should I use?',answer:'Paintbox Yarns Cotton 4 Ply is recommended because lightweight cotton is breathable, comfortable and easy to see while crocheting.'},{question:'Can I customize the colour?',answer:'Yes. Changing colours is an easy way to make the design your own. Make a small sample first to check that your tension remains consistent.'},{question:'What sizes are included?',answer:'The pattern includes multiple sizes covering approximately 81 cm to 147 cm chest measurements; always compare your measurements with the pattern before starting.'}]});
-=======
-add('faq',{title:'Frequently asked questions',items:[['Is this crochet bralette pattern beginner friendly?','Yes. It is classified as easy and suits crocheters making their first wearable garment.'],['What yarn should I use?','Paintbox Yarns Cotton 4 Ply is recommended for lightweight summer clothing.'],['Can I customize the colour?','Yes. Changing colours is an easy way to make the design your own.'],['What sizes are included?','The pattern includes multiple sizes covering approximately 81 cm to 147 cm chest measurements.']]});
->>>>>>> e88740530d3cce5e62bc313c6f53c101e91ebdae
-add('lead_magnet',{eyebrow:'FREE CROCHET PATTERN',title:'Get the complete crochet bralette PDF',body:'Enter your email to receive the full pattern and discover more wearable crochet designs.',cta:'Send me the pattern',url:`/free/${slug}`});
-export const braletteArticles=[{slug,categoryPath:'crafts/crochet',title,dek,readTime:'10 min read',seoTitle:'Crochet Bralette Pattern | Easy Handmade Summer Top DIY',seoDescription:dek,image:images[0].url,imageAlt:images[0].alt,socialImage:images[0].url,primaryKeyword:'crochet bralette pattern',secondaryKeywords:['crochet summer top pattern','DIY crochet top','crochet clothing pattern','crochet crop top pattern','beginner crochet wearable'],blocks}];

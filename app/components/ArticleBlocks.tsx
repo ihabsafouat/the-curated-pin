@@ -43,6 +43,12 @@ export function getFaqItems(blocks: ArticleBlock[]) {
   return blocks.flatMap((block) => block.type === "faq" ? block.items : []);
 }
 
+function inlineText(text: string) {
+  return text.split(/(\*\*[^*]+\*\*)/g).map((part, i) =>
+    part.startsWith("**") && part.endsWith("**") ? <strong key={i}>{part.slice(2, -2)}</strong> : part
+  );
+}
+
 export default function ArticleBlocks({ blocks, startIndex = 0, ideaStart = 0 }: { blocks: ArticleBlock[]; startIndex?: number; ideaStart?: number }) {
   let ideaOrdinal=ideaStart;
   return <div className="richArticleBlocks">{blocks.map((block, index) => {
@@ -51,7 +57,7 @@ export default function ArticleBlocks({ blocks, startIndex = 0, ideaStart = 0 }:
     const ideaNumber=block.type==="idea" ? ++ideaOrdinal : 0;
     switch (block.type) {
       case "paragraph":
-        return <p className="richParagraph" key={block.id}>{block.text}</p>;
+        return <p className="richParagraph" key={block.id}>{inlineText(block.text)}</p>;
       case "heading":
         return block.level === 2
           ? <h2 id={anchorId} className="richHeading richH2" key={block.id}>{block.text}</h2>
@@ -65,7 +71,7 @@ export default function ArticleBlocks({ blocks, startIndex = 0, ideaStart = 0 }:
       case "checklist":
         return <section className="listBlock checklistBlock" key={block.id}><h3>{block.title}</h3><ul>{block.items.map((item, itemIndex) => <li key={`${block.id}-${itemIndex}`}><span aria-hidden="true">✓</span>{item}</li>)}</ul></section>;
       case "bullets":
-        return <section className="listBlock" key={block.id}>{block.title && <h3>{block.title}</h3>}<ul>{block.items.map((item, itemIndex) => <li key={`${block.id}-${itemIndex}`}>{item}</li>)}</ul></section>;
+        return <section className="listBlock" key={block.id}>{block.title && <h3>{block.title}</h3>}<ul>{block.items.map((item, itemIndex) => <li key={`${block.id}-${itemIndex}`}>{inlineText(item)}</li>)}</ul></section>;
       case "table":
         return <section className="tableBlock" key={block.id}>{block.title && <h3>{block.title}</h3>}<p className="tableHint" aria-hidden="true">Swipe to compare →</p><div className="tableScroll" role="region" aria-label={block.title || "Comparison table"} tabIndex={0}><table><thead><tr>{block.headers.map((header) => <th key={header}>{header}</th>)}</tr></thead><tbody>{block.rows.map((row, rowIndex) => <tr key={`${block.id}-${rowIndex}`}>{block.headers.map((header, cellIndex) => <td data-label={header} key={`${block.id}-${rowIndex}-${cellIndex}`}>{row[cellIndex] || ""}</td>)}</tr>)}</tbody></table></div></section>;
       case "comparison":

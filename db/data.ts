@@ -6,7 +6,7 @@ import type { AnalyticsSummary, ArticleInput, ManagedArticle } from "./types";
 import { databaseIsConfigured } from "./client";
 import { fallbackLaunchArticles } from "./fallback-content";
 
-const LOCAL_CONTENT_SLUGS = new Set(["crochet-pumpkin-pattern", "crochet-ghost-pattern", "crochet-bat-amigurumi-pattern", "crochet-dinosaur-pattern", "halloween-crochet-plushie-collection"]);
+const LOCAL_CONTENT_SLUGS = new Set(["crochet-pumpkin-pattern", "crochet-ghost-pattern", "crochet-bat-amigurumi-pattern", "crochet-dinosaur-amigurumi-pattern", "crochet-bralette-pattern", "halloween-crochet-plushie-collection"]);
 
 export type { AnalyticsSummary, ArticleInput, ManagedArticle } from "./types";
 
@@ -90,13 +90,23 @@ function rowToArticle(row: ArticleRow): ManagedArticle {
   };
 }
 
+// Keep bundled editorial updates consistent across detail pages and listings.
+function withLocalContent(articles: ManagedArticle[], path?: string): ManagedArticle[] {
+  const updates = fallbackLaunchArticles.filter(article => LOCAL_CONTENT_SLUGS.has(article.slug) &&
+    (!path || article.categoryPath === path || article.categoryPath.startsWith(`${path}/`)));
+  const bySlug = new Map(updates.map(article => [article.slug, article]));
+  const merged = articles.map(article => bySlug.get(article.slug) ?? article);
+  const existing = new Set(articles.map(article => article.slug));
+  return [...merged, ...updates.filter(article => !existing.has(article.slug))];
+}
+
 export async function getPublishedArticles(): Promise<ManagedArticle[]> {
   if (!databaseIsConfigured()) return fallbackLaunchArticles;
   try {
     const rows = await queryRows<ArticleRow>(
       `${ARTICLE_SELECT} WHERE a.status = 'published' AND c.status = 'active' ORDER BY a.published_at DESC, a.id DESC`,
     );
-    return rows.map(rowToArticle);
+    return withLocalContent(rows.map(rowToArticle));
   } catch (error) {
     console.error("Unable to load published articles; using bundled launch content.", error);
     return fallbackLaunchArticles;
@@ -111,7 +121,7 @@ export async function getPublishedArticlesByCategoryPath(path: string): Promise<
        ORDER BY a.published_at DESC, a.id DESC`,
       [path, `${path}/%`],
     );
-    return rows.map(rowToArticle);
+    return withLocalContent(rows.map(rowToArticle), path);
   } catch (error) {
     console.error(`Unable to load published articles for ${path}; using bundled launch content.`, error);
     return fallbackLaunchArticles.filter((article) => article.categoryPath === path || article.categoryPath.startsWith(`${path}/`));
