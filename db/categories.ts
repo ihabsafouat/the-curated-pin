@@ -60,7 +60,11 @@ export async function getCategories(options: { includeInactive?: boolean } = {})
     const rows = await queryRows<CategoryRow>(
       `${CATEGORY_SELECT}${options.includeInactive ? "" : " WHERE status = 'active'"} ORDER BY sort_order ASC, name ASC`,
     );
-    return rows.map(rowToCategory);
+    const dbCategories = rows.map(rowToCategory);
+    const dbPaths = new Set(dbCategories.map((c) => c.path));
+    const missing = fallbackCategories.filter((c) => !dbPaths.has(c.path));
+    if (missing.length === 0) return dbCategories;
+    return [...dbCategories, ...missing];
   } catch (error) {
     if (options.includeInactive) throw error;
     console.error("Unable to load categories; using bundled launch taxonomy.", error);
@@ -73,11 +77,19 @@ export async function getAdminCategories(): Promise<Category[]> {
 }
 
 export async function getCategoryById(id: number, options: { includeInactive?: boolean } = {}): Promise<Category | null> {
-  const row = await queryOne<CategoryRow>(
-    `${CATEGORY_SELECT} WHERE id = ?${options.includeInactive ? "" : " AND status = 'active'"} LIMIT 1`,
-    [id],
-  );
-  return row ? rowToCategory(row) : null;
+  const bundled = fallbackCategories.find((category) => category.id === id) ?? null;
+  if (!databaseIsConfigured() && !options.includeInactive) return bundled;
+  try {
+    const row = await queryOne<CategoryRow>(
+      `${CATEGORY_SELECT} WHERE id = ?${options.includeInactive ? "" : " AND status = 'active'"} LIMIT 1`,
+      [id],
+    );
+    return row ? rowToCategory(row) : bundled;
+  } catch (error) {
+    if (options.includeInactive) throw error;
+    console.error(`Unable to load category id ${id}; using bundled launch taxonomy.`, error);
+    return bundled;
+  }
 }
 
 export async function getCategoryByPath(path: string, options: { includeInactive?: boolean } = {}): Promise<Category | null> {
@@ -87,7 +99,7 @@ export async function getCategoryByPath(path: string, options: { includeInactive
       `${CATEGORY_SELECT} WHERE path = ?${options.includeInactive ? "" : " AND status = 'active'"} LIMIT 1`,
       [path],
     );
-    return row ? rowToCategory(row) : null;
+    return row ? rowToCategory(row) : fallbackCategory(path);
   } catch (error) {
     if (options.includeInactive) throw error;
     console.error(`Unable to load category ${path}; using bundled launch taxonomy.`, error);
@@ -105,7 +117,11 @@ export async function getNavigationCategories(): Promise<Category[]> {
 export async function getPublicNavigationCategories(): Promise<Category[]> {
   if (!databaseIsConfigured()) return fallbackNavigationCategories;
   try {
-    return await getNavigationCategories();
+    const nav = await getNavigationCategories();
+    const navPaths = new Set(nav.map((c) => c.path));
+    const missing = fallbackNavigationCategories.filter((c) => !navPaths.has(c.path));
+    if (missing.length === 0) return nav;
+    return [...nav, ...missing].sort((a, b) => a.sortOrder - b.sortOrder);
   } catch (error) {
     console.error("Unable to load public navigation categories; using the launch fallback.", error);
     return fallbackNavigationCategories;
@@ -119,7 +135,9 @@ export async function getChildCategories(parentId: number, options: { includeIna
       `${CATEGORY_SELECT} WHERE parent_id = ?${options.includeInactive ? "" : " AND status = 'active'"} ORDER BY sort_order ASC, name ASC`,
       [parentId],
     );
-    return rows.map(rowToCategory);
+    const dbChildren = rows.map(rowToCategory);
+    if (dbChildren.length > 0) return dbChildren;
+    return fallbackCategoryChildren(parentId);
   } catch (error) {
     if (options.includeInactive) throw error;
     console.error("Unable to load child categories; using bundled launch taxonomy.", error);
@@ -224,7 +242,8 @@ export async function updateCategory(id: number, input: CategoryInput): Promise<
 
 export async function categoryHasPublishedArticles(path: string): Promise<boolean> {
   const fallbackHasContent = fallbackLaunchArticles.some((article) => article.categoryPath === path || article.categoryPath.startsWith(`${path}/`));
-  if (!databaseIsConfigured()) return fallbackHasContent;
+  if (fallbackHasContent) return true;
+  if (!databaseIsConfigured()) return false;
   try {
     const row = await queryOne<{ exists: boolean }>(
       `SELECT EXISTS(
@@ -249,7 +268,8 @@ export async function countPublishedArticlesByCategory(path: string): Promise<nu
        WHERE a.status = 'published' AND c.status = 'active' AND (c.path = ? OR c.path LIKE ?)`,
       [path, `${path}/%`],
     );
-    return Number(row?.count ?? 0);
+    const dbCount = Number(row?.count ?? 0);
+    return Math.max(dbCount, fallbackCount);
   } catch (error) {
     console.error(`Unable to count articles for ${path}; using bundled launch content.`, error);
     return fallbackCount;

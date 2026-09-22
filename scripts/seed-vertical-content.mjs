@@ -1,7 +1,13 @@
 import pg from "pg";
 import { verticalArticles } from "../launch/vertical-launch-content.mjs";
+import { halloweenCrochetArticles } from "../launch/halloween-crochet-content.mjs";
+import { braletteArticles } from "../launch/bralette-content.mjs";
 
-const releaseArticles=verticalArticles;
+const releaseArticles = [
+  ...verticalArticles,
+  ...halloweenCrochetArticles,
+  ...braletteArticles,
+];
 
 const databaseUrl=process.env.DATABASE_MIGRATION_URL||process.env.DATABASE_URL;
 if(!databaseUrl) throw new Error("DATABASE_MIGRATION_URL or DATABASE_URL is required.");

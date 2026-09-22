@@ -7,13 +7,10 @@ import { databaseIsConfigured } from "./client";
 import { fallbackLaunchArticles } from "./fallback-content";
 
 const LOCAL_CONTENT_SLUGS = new Set([
-  "crochet-pumpkin-pattern",
-  "crochet-ghost-pattern",
-  "crochet-bat-amigurumi-pattern",
+  ...fallbackLaunchArticles
+    .filter((article) => article.categoryPath === "crafts/crochet" || article.categoryPath.startsWith("crafts/crochet/"))
+    .map((article) => article.slug),
   "crochet-dinosaur-pattern",
-  "crochet-dinosaur-amigurumi-pattern",
-  "crochet-bralette-pattern",
-  "halloween-crochet-plushie-collection",
 ]);
 
 export type { AnalyticsSummary, ArticleInput, ManagedArticle } from "./types";
@@ -104,7 +101,30 @@ export async function getPublishedArticles(): Promise<ManagedArticle[]> {
     const rows = await queryRows<ArticleRow>(
       `${ARTICLE_SELECT} WHERE a.status = 'published' AND c.status = 'active' ORDER BY a.published_at DESC, a.id DESC`,
     );
-    return rows.map(rowToArticle);
+    const dbArticles = rows.map(rowToArticle);
+    const dbSlugs = new Set(dbArticles.map((a) => a.slug));
+
+    const extraArticles = fallbackLaunchArticles.filter(
+      (article) => !dbSlugs.has(article.slug) || LOCAL_CONTENT_SLUGS.has(article.slug),
+    );
+
+    if (extraArticles.length === 0) return dbArticles;
+
+    const result = dbArticles.map((article) => {
+      if (LOCAL_CONTENT_SLUGS.has(article.slug)) {
+        return fallbackLaunchArticles.find((b) => b.slug === article.slug) ?? article;
+      }
+      return article;
+    });
+
+    const resultSlugs = new Set(result.map((a) => a.slug));
+    for (const extra of extraArticles) {
+      if (!resultSlugs.has(extra.slug)) {
+        result.push(extra);
+      }
+    }
+
+    return result;
   } catch (error) {
     console.error("Unable to load published articles; using bundled launch content.", error);
     return fallbackLaunchArticles;
@@ -112,29 +132,56 @@ export async function getPublishedArticles(): Promise<ManagedArticle[]> {
 }
 
 export async function getPublishedArticlesByCategoryPath(path: string): Promise<ManagedArticle[]> {
-  if (!databaseIsConfigured()) return fallbackLaunchArticles.filter((article) => article.categoryPath === path || article.categoryPath.startsWith(`${path}/`));
+  const bundledForPath = fallbackLaunchArticles.filter(
+    (article) => article.categoryPath === path || article.categoryPath.startsWith(`${path}/`),
+  );
+  if (!databaseIsConfigured()) return bundledForPath;
   try {
     const rows = await queryRows<ArticleRow>(
       `${ARTICLE_SELECT} WHERE a.status = 'published' AND c.status = 'active' AND (c.path = ? OR c.path LIKE ?)
        ORDER BY a.published_at DESC, a.id DESC`,
       [path, `${path}/%`],
     );
-    return rows.map(rowToArticle);
+    const dbArticles = rows.map(rowToArticle);
+    const dbSlugs = new Set(dbArticles.map((a) => a.slug));
+
+    const extraArticles = bundledForPath.filter(
+      (article) => !dbSlugs.has(article.slug) || LOCAL_CONTENT_SLUGS.has(article.slug),
+    );
+
+    if (extraArticles.length === 0) return dbArticles;
+
+    const result = dbArticles.map((article) => {
+      if (LOCAL_CONTENT_SLUGS.has(article.slug)) {
+        return bundledForPath.find((b) => b.slug === article.slug) ?? article;
+      }
+      return article;
+    });
+
+    const resultSlugs = new Set(result.map((a) => a.slug));
+    for (const extra of extraArticles) {
+      if (!resultSlugs.has(extra.slug)) {
+        result.push(extra);
+      }
+    }
+
+    return result;
   } catch (error) {
     console.error(`Unable to load published articles for ${path}; using bundled launch content.`, error);
-    return fallbackLaunchArticles.filter((article) => article.categoryPath === path || article.categoryPath.startsWith(`${path}/`));
+    return bundledForPath;
   }
 }
 
 export async function getArticleBySlug(slug: string): Promise<ManagedArticle | null> {
-  const bundled = fallbackLaunchArticles.find((article) => article.slug === slug) ?? null;
-  if (!databaseIsConfigured() || LOCAL_CONTENT_SLUGS.has(slug)) return bundled;
+  const normalizedSlug = slug === "crochet-dinosaur-pattern" ? "crochet-dinosaur-amigurumi-pattern" : slug;
+  const bundled = fallbackLaunchArticles.find((article) => article.slug === normalizedSlug) ?? null;
+  if (!databaseIsConfigured() || LOCAL_CONTENT_SLUGS.has(normalizedSlug)) return bundled;
   try {
     const row = await queryOne<ArticleRow>(
       `${ARTICLE_SELECT} WHERE a.slug = ? AND a.status = 'published' AND c.status = 'active' LIMIT 1`,
-      [slug],
+      [normalizedSlug],
     );
-    return row ? rowToArticle(row) : null;
+    return row ? rowToArticle(row) : bundled;
   } catch (error) {
     console.error(`Unable to load ${slug}; using bundled launch content when available.`, error);
     return bundled;

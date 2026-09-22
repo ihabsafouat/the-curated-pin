@@ -46,6 +46,11 @@ const nextConfig: NextConfig = {
         destination: "/free/crochet-ghost-pattern",
         permanent: false,
       },
+      {
+        source: "/article/crochet-dinosaur-pattern",
+        destination: "/article/crochet-dinosaur-amigurumi-pattern",
+        permanent: true,
+      },
     ];
   },
   async headers() {
