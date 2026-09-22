@@ -2,7 +2,10 @@ import pg from "pg";
 import { pages,keywords,links,backlinkAssets } from "../seo/vertical-plan.mjs";
 const databaseUrl=process.env.DATABASE_MIGRATION_URL||process.env.DATABASE_URL;
 if(!databaseUrl) throw new Error("DATABASE_MIGRATION_URL or DATABASE_URL is required.");
-const client=new pg.Client({connectionString:databaseUrl});
+const client=new pg.Client({
+  connectionString: databaseUrl,
+  ssl: databaseUrl.includes("localhost") ? false : { rejectUnauthorized: false },
+});
 await client.connect();
 try{
   await client.query("BEGIN");

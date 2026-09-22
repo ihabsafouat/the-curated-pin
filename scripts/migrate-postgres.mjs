@@ -7,7 +7,10 @@ if (!databaseUrl) throw new Error("DATABASE_MIGRATION_URL or DATABASE_URL is req
 
 const directory = resolve("postgres/migrations");
 const files = (await readdir(directory)).filter((file) => file.endsWith(".sql")).sort();
-const client = new pg.Client({ connectionString: databaseUrl });
+const client = new pg.Client({
+  connectionString: databaseUrl,
+  ssl: databaseUrl.includes("localhost") ? false : { rejectUnauthorized: false },
+});
 
 await client.connect();
 try {
