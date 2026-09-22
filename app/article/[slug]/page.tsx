@@ -12,7 +12,8 @@ import { getCurrentUser } from "../../security/auth";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import StructuredData from "../../components/StructuredData";
 import ReaderFeedback from "../../components/ReaderFeedback";
-import ArticleBlocks, { articleHasAffiliateBlocks, getArticleHeadings } from "../../components/ArticleBlocks";
+import ArticleBlocks, { articleHasAffiliateBlocks, getArticleHeadings, siteSlug } from "../../components/ArticleBlocks";
+import { getDedicatedArticleProduct } from "../product";
 import ArticleGuideNav from "../../components/ArticleGuideNav";
 import MediaImage from "../../components/MediaImage";
 import ArticleUtilityBar from "../../components/ArticleUtilityBar";
@@ -79,6 +80,7 @@ const articlePromiseOverrides: Record<string, { label: string; title: string; it
   "backyard-party-games": { label: "BACKYARD GAME PLAN", title: "Choose the stations, gather the supplies and start playing.", items: ["12 low-prep games", "Setup and safety notes", "Mixed-age and weather backups"] },
   "crochet-flower-bouquet-pattern": { label: "FREE CROCHET GUIDE", title: "Plan a bouquet that looks balanced from every angle.", items: ["Flower and leaf ratios", "Stem-height and color map", "Complete assembly sequence"] },
   "easy-crochet-baby-blanket-pattern": { label: "FREE CROCHET GUIDE", title: "Plan the size and yarn before the first long row.", items: ["Materials and gauge math", "Finished measurements", "Border and troubleshooting notes"] },
+  "crochet-ghost-pattern": { label: "FREE CROCHET PATTERN", title: "A friendly witch-hat ghost designed for smooth Halloween crafting.", items: ["Materials and yarn recommendations", "Step-by-step amigurumi guide", "Printable pattern PDF and display ideas"] },
 };
 
 function articlePromise(article: { slug: string; categoryPath: string }) {
@@ -103,6 +105,7 @@ export default async function ArticlePage({ params, searchParams }: { params: Pr
     getLeadMagnetForContext({ articleSlug: slug, categoryPath: article.categoryPath }),
   ]);
 
+  const topProduct = getDedicatedArticleProduct(article);
   const fallbackRelated = allArticles.filter((item) => item.categoryPath === article.categoryPath && item.slug !== article.slug).slice(0, 3);
   const strategicArticleLinks = strategicLinks.filter((link) => link.targetUrl?.startsWith("/article/"));
   const headings = getArticleHeadings(article.blocks);
@@ -165,6 +168,33 @@ export default async function ArticlePage({ params, searchParams }: { params: Pr
         <div className="articleBody" id="guide-content">
           {hasAffiliateContent && <p className="affiliateNote"><b>Affiliate disclosure:</b> This guide may contain paid links. If you buy through them, we may earn a commission at no extra cost to you. Recommendations and editorial choices remain ours. <a href="/editorial-policy">See our editorial policy.</a></p>}
           <p className="intro">{article.dek}</p>
+          {topProduct && (
+            <aside
+              className="leadMagnetBlock topArticleLeadMagnet"
+              data-analytics-impression="true"
+              data-analytics-kind={topProduct.kind}
+              data-analytics-placement="article:top"
+              data-lead-magnet={topProduct.kind === "lead_magnet" ? siteSlug(topProduct.url, "/free/") || undefined : undefined}
+              data-product-slug={topProduct.kind === "product" ? siteSlug(topProduct.url, "/shop/") || undefined : undefined}
+              data-analytics-label={topProduct.title}
+            >
+              <small>{topProduct.eyebrow}</small>
+              <h3>{topProduct.title}</h3>
+              <p>{topProduct.body}</p>
+              <a
+                className="downloadButton"
+                href={topProduct.url}
+                target={topProduct.url.startsWith("http") ? "_blank" : undefined}
+                rel={topProduct.url.startsWith("http") ? "noopener" : undefined}
+                data-analytics-kind={topProduct.kind}
+                data-lead-magnet={topProduct.kind === "lead_magnet" ? siteSlug(topProduct.url, "/free/") || undefined : undefined}
+                data-product-slug={topProduct.kind === "product" ? siteSlug(topProduct.url, "/shop/") || topProduct.slug || undefined : undefined}
+                data-analytics-placement="article:top"
+              >
+                {topProduct.cta} →
+              </a>
+            </aside>
+          )}
           <ArticleBlocks blocks={blocksBeforeLead} startIndex={0} ideaStart={0}/>
           {leadMagnet && <ContextualLeadMagnet magnet={leadMagnet} source={`article:${article.slug}`} articleSlug={article.slug} categoryPath={article.categoryPath}/>}
           <ArticleBlocks blocks={blocksAfterLead} startIndex={leadInsertAt} ideaStart={ideasBeforeLead}/>

@@ -411,6 +411,13 @@ const teenResource: LeadMagnet["resource"] = [
   { title: "Party timeline", fields: ["Arrival", "Icebreaker", "Main activity", "Food", "Free time", "Cake", "Photos", "Pickup / sleepover"] },
 ];
 
+const braletteResource: LeadMagnet["resource"] = [
+  { title: "Project overview & sizing", checklist: ["Chest sizes 81 cm to 147 cm", "Gauge swatch verification", "Custom fit adjustments", "Stitch tension guide"] },
+  { title: "Materials & tools list", checklist: ["Paintbox Yarns Cotton 4 Ply", "4mm crochet hook sizing", "Tapestry yarn needle", "Locking stitch markers"] },
+  { title: "Step-by-step cup construction", checklist: ["Foundation chain & first row", "Shaping and gentle increases", "Mirror cup construction", "Edge stabilization"] },
+  { title: "Band, straps & finishing", checklist: ["Comfortable underbust band", "Adjustable strap placement", "Invisible seam weaving", "Care & washing guidelines"] },
+];
+
 export const fallbackLeadMagnets: LeadMagnet[] = [
   {
     id: -1,
@@ -442,13 +449,47 @@ export const fallbackLeadMagnets: LeadMagnet[] = [
     status: "active",
     seoIndex: false,
   },
+  {
+    id: -3,
+    slug: "crochet-bralette-pattern",
+    name: "The Balcony Bralette Crochet Pattern",
+    eyebrow: "FREE CROCHET PATTERN",
+    description: "A beautiful, beginner-friendly wearable crochet pattern with step-by-step cup shaping, adjustable sizing (81–147 cm), strap construction, and styling tips.",
+    ctaLabel: "Download the free pattern",
+    interestKey: "crochet",
+    assetUrl: "/downloads/balcony-bralette.pdf",
+    resource: braletteResource,
+    emailSubject: "Your Free Balcony Bralette Crochet Pattern",
+    emailIntro: "Your Balcony Bralette pattern is ready. Create a stylish handmade summer top with clear shaping and customizable sizing.",
+    status: "active",
+    seoIndex: false,
+  },
+  {
+    id: -4,
+    slug: "balcony-bralette",
+    name: "The Balcony Bralette Crochet Pattern",
+    eyebrow: "FREE CROCHET PATTERN",
+    description: "A beautiful, beginner-friendly wearable crochet pattern with step-by-step cup shaping, adjustable sizing (81–147 cm), strap construction, and styling tips.",
+    ctaLabel: "Download the free pattern",
+    interestKey: "crochet",
+    assetUrl: "/downloads/balcony-bralette.pdf",
+    resource: braletteResource,
+    emailSubject: "Your Free Balcony Bralette Crochet Pattern",
+    emailIntro: "Your Balcony Bralette pattern is ready. Create a stylish handmade summer top with clear shaping and customizable sizing.",
+    status: "active",
+    seoIndex: false,
+  },
 ];
 
 export function fallbackLeadMagnet(slug: string): LeadMagnet | null {
-  return fallbackLeadMagnets.find((magnet) => magnet.slug === slug) ?? null;
+  const normalized = slug === "balcony-bralette" ? "crochet-bralette-pattern" : slug;
+  return fallbackLeadMagnets.find((magnet) => magnet.slug === normalized || magnet.slug === slug) ?? null;
 }
 
 export function fallbackLeadMagnetForContext(context: { articleSlug?: string; categoryPath?: string }): LeadMagnet | null {
+  if (context.articleSlug === "crochet-bralette-pattern" || context.categoryPath?.startsWith("crafts/crochet")) {
+    return fallbackLeadMagnets.find((m) => m.slug === "crochet-bralette-pattern") ?? null;
+  }
   if (context.categoryPath && !context.categoryPath.startsWith("celebrations/birthday-parties")) return null;
   if (context.articleSlug && verticalArticles.some((article) => article.slug === context.articleSlug)) return null;
   const teenSlugs = new Set(["teen-birthday-party-ideas", "13th-birthday-party-ideas", "18th-birthday-party-ideas"]);

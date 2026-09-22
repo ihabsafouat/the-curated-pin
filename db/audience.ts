@@ -132,92 +132,130 @@ export async function subscribeAudience(input: AudienceSignupInput): Promise<{ s
   const normalizedEmail = input.email.trim().toLowerCase();
   const magnet = input.leadMagnetSlug ? await getLeadMagnetBySlug(input.leadMagnetSlug) : null;
   const requestedInterest = magnet?.interestKey || input.interestKey || "general";
-  const lineage = await interestLineage(requestedInterest);
-  const validInterest = lineage[0] || "general";
   const now = new Date().toISOString();
-  const row = await queryOne<{
-    id: number | string; email: string; first_name: string; status: "subscribed" | "unsubscribed"; source: string; last_source: string; primary_interest: string | null; lead_magnet_slug: string | null; created_at: string | Date; updated_at: string | Date;
-  }>(
-    `INSERT INTO newsletter_subscribers
-      (email,first_name,status,source,last_source,primary_interest,lead_magnet_slug,last_article_slug,last_category_path,utm_source,utm_medium,utm_campaign,utm_content,utm_term,consent_at,consent_version,updated_at,unsubscribed_at)
-     VALUES (?,?,'subscribed',?,?,?,?,?,?,?,?,?,?,?,?,?,?,NULL)
-     ON CONFLICT(email) DO UPDATE SET
-       first_name=CASE WHEN excluded.first_name<>'' THEN excluded.first_name ELSE newsletter_subscribers.first_name END,
-       status='subscribed',last_source=excluded.last_source,primary_interest=excluded.primary_interest,
-       lead_magnet_slug=COALESCE(excluded.lead_magnet_slug,newsletter_subscribers.lead_magnet_slug),
-       last_article_slug=COALESCE(excluded.last_article_slug,newsletter_subscribers.last_article_slug),
-       last_category_path=COALESCE(excluded.last_category_path,newsletter_subscribers.last_category_path),
-       utm_source=COALESCE(excluded.utm_source,newsletter_subscribers.utm_source),utm_medium=COALESCE(excluded.utm_medium,newsletter_subscribers.utm_medium),
-       utm_campaign=COALESCE(excluded.utm_campaign,newsletter_subscribers.utm_campaign),utm_content=COALESCE(excluded.utm_content,newsletter_subscribers.utm_content),utm_term=COALESCE(excluded.utm_term,newsletter_subscribers.utm_term),
-       consent_at=excluded.consent_at,consent_version=excluded.consent_version,updated_at=excluded.updated_at,unsubscribed_at=NULL
-     RETURNING id,email,first_name,status,source,last_source,primary_interest,lead_magnet_slug,created_at,updated_at`,
-    [
-      normalizedEmail,
-      (input.firstName || "").trim().slice(0, 80),
-      input.source.slice(0, 80),
-      input.source.slice(0, 80),
-      validInterest,
-      magnet?.slug || null,
-      input.articleSlug || null,
-      input.categoryPath || null,
-      input.utmSource || null,
-      input.utmMedium || null,
-      input.utmCampaign || null,
-      input.utmContent || null,
-      input.utmTerm || null,
-      now,
-      input.consentVersion || "email-v1",
-      now,
-    ],
-  );
-  if (!row) throw new Error("Could not create newsletter subscriber.");
 
-  const interestKeys = lineage.length ? lineage : ["general"];
-  for (const interestKey of interestKeys) {
-    await execute(
-      `INSERT INTO newsletter_subscriber_interests (subscriber_id,interest_key,source) VALUES (?,?,?) ON CONFLICT(subscriber_id,interest_key) DO NOTHING`,
-      [row.id, interestKey, magnet ? `lead:${magnet.slug}` : input.source.slice(0, 80)],
-    );
+  if (!databaseIsConfigured()) {
+    return {
+      subscriber: {
+        id: -1,
+        email: normalizedEmail,
+        firstName: (input.firstName || "").trim().slice(0, 80),
+        status: "subscribed",
+        source: input.source.slice(0, 80),
+        lastSource: input.source.slice(0, 80),
+        primaryInterest: requestedInterest,
+        leadMagnetSlug: magnet?.slug || null,
+        createdAt: now,
+        updatedAt: now,
+        interests: [requestedInterest],
+      },
+      leadMagnet: magnet,
+    };
   }
 
-  let sequence: { id: number | string; delay_hours: number | string | null; interest_key: string } | null = null;
-  for (const interestKey of interestKeys) {
-    sequence = await queryOne<{ id: number | string; delay_hours: number | string | null; interest_key: string }>(
-      `SELECT s.id,s.interest_key,st.delay_hours FROM email_sequences s
-       JOIN email_sequence_steps st ON st.sequence_id=s.id AND st.step_number=1
-       WHERE s.status='active' AND s.interest_key=? LIMIT 1`,
-      [interestKey],
+  try {
+    const lineage = await interestLineage(requestedInterest);
+    const validInterest = lineage[0] || "general";
+    const row = await queryOne<{
+      id: number | string; email: string; first_name: string; status: "subscribed" | "unsubscribed"; source: string; last_source: string; primary_interest: string | null; lead_magnet_slug: string | null; created_at: string | Date; updated_at: string | Date;
+    }>(
+      `INSERT INTO newsletter_subscribers
+        (email,first_name,status,source,last_source,primary_interest,lead_magnet_slug,last_article_slug,last_category_path,utm_source,utm_medium,utm_campaign,utm_content,utm_term,consent_at,consent_version,updated_at,unsubscribed_at)
+       VALUES (?,?,'subscribed',?,?,?,?,?,?,?,?,?,?,?,?,?,?,NULL)
+       ON CONFLICT(email) DO UPDATE SET
+         first_name=CASE WHEN excluded.first_name<>'' THEN excluded.first_name ELSE newsletter_subscribers.first_name END,
+         status='subscribed',last_source=excluded.last_source,primary_interest=excluded.primary_interest,
+         lead_magnet_slug=COALESCE(excluded.lead_magnet_slug,newsletter_subscribers.lead_magnet_slug),
+         last_article_slug=COALESCE(excluded.last_article_slug,newsletter_subscribers.last_article_slug),
+         last_category_path=COALESCE(excluded.last_category_path,newsletter_subscribers.last_category_path),
+         utm_source=COALESCE(excluded.utm_source,newsletter_subscribers.utm_source),utm_medium=COALESCE(excluded.utm_medium,newsletter_subscribers.utm_medium),
+         utm_campaign=COALESCE(excluded.utm_campaign,newsletter_subscribers.utm_campaign),utm_content=COALESCE(excluded.utm_content,newsletter_subscribers.utm_content),utm_term=COALESCE(excluded.utm_term,newsletter_subscribers.utm_term),
+         consent_at=excluded.consent_at,consent_version=excluded.consent_version,updated_at=excluded.updated_at,unsubscribed_at=NULL
+       RETURNING id,email,first_name,status,source,last_source,primary_interest,lead_magnet_slug,created_at,updated_at`,
+      [
+        normalizedEmail,
+        (input.firstName || "").trim().slice(0, 80),
+        input.source.slice(0, 80),
+        input.source.slice(0, 80),
+        validInterest,
+        magnet?.slug || null,
+        input.articleSlug || null,
+        input.categoryPath || null,
+        input.utmSource || null,
+        input.utmMedium || null,
+        input.utmCampaign || null,
+        input.utmContent || null,
+        input.utmTerm || null,
+        now,
+        input.consentVersion || "email-v1",
+        now,
+      ],
     );
-    if (sequence) break;
-  }
+    if (!row) throw new Error("Could not create newsletter subscriber.");
 
-  if (sequence) {
-    // A more specific nurture sequence replaces any active ancestor sequence so a
-    // Teen Birthday reader does not receive both the Teen and generic Birthday flows.
+    const interestKeys = lineage.length ? lineage : ["general"];
     for (const interestKey of interestKeys) {
-      if (interestKey === sequence.interest_key) continue;
       await execute(
-        `UPDATE subscriber_sequence_enrollments e SET status='cancelled',updated_at=CURRENT_TIMESTAMP
-         FROM email_sequences s WHERE e.sequence_id=s.id AND e.subscriber_id=? AND e.status='active' AND s.interest_key=?`,
-        [row.id, interestKey],
+        `INSERT INTO newsletter_subscriber_interests (subscriber_id,interest_key,source) VALUES (?,?,?) ON CONFLICT(subscriber_id,interest_key) DO NOTHING`,
+        [row.id, interestKey, magnet ? `lead:${magnet.slug}` : input.source.slice(0, 80)],
       );
     }
-    const nextSendAt = new Date(Date.now() + Number(sequence.delay_hours || 24) * 60 * 60 * 1000).toISOString();
-    await execute(
-      `INSERT INTO subscriber_sequence_enrollments (subscriber_id,sequence_id,current_step,next_send_at,status)
-       VALUES (?,?,0,?,'active')
-       ON CONFLICT(subscriber_id,sequence_id) DO UPDATE SET status='active',next_send_at=CASE WHEN subscriber_sequence_enrollments.status IN ('completed','cancelled') THEN excluded.next_send_at ELSE subscriber_sequence_enrollments.next_send_at END,updated_at=CURRENT_TIMESTAMP`,
-      [row.id, sequence.id, nextSendAt],
-    );
-  }
 
-  return {
-    subscriber: {
-      id: Number(row.id), email: row.email, firstName: row.first_name, status: row.status, source: row.source, lastSource: row.last_source,
-      primaryInterest: row.primary_interest, leadMagnetSlug: row.lead_magnet_slug, createdAt: dateString(row.created_at), updatedAt: dateString(row.updated_at), interests: interestKeys,
-    },
-    leadMagnet: magnet,
-  };
+    let sequence: { id: number | string; delay_hours: number | string | null; interest_key: string } | null = null;
+    for (const interestKey of interestKeys) {
+      sequence = await queryOne<{ id: number | string; delay_hours: number | string | null; interest_key: string }>(
+        `SELECT s.id,s.interest_key,st.delay_hours FROM email_sequences s
+         JOIN email_sequence_steps st ON st.sequence_id=s.id AND st.step_number=1
+         WHERE s.status='active' AND s.interest_key=? LIMIT 1`,
+        [interestKey],
+      );
+      if (sequence) break;
+    }
+
+    if (sequence) {
+      for (const interestKey of interestKeys) {
+        if (interestKey === sequence.interest_key) continue;
+        await execute(
+          `UPDATE subscriber_sequence_enrollments e SET status='cancelled',updated_at=CURRENT_TIMESTAMP
+           FROM email_sequences s WHERE e.sequence_id=s.id AND e.subscriber_id=? AND e.status='active' AND s.interest_key=?`,
+          [row.id, interestKey],
+        );
+      }
+      const nextSendAt = new Date(Date.now() + Number(sequence.delay_hours || 24) * 60 * 60 * 1000).toISOString();
+      await execute(
+        `INSERT INTO subscriber_sequence_enrollments (subscriber_id,sequence_id,current_step,next_send_at,status)
+         VALUES (?,?,0,?,'active')
+         ON CONFLICT(subscriber_id,sequence_id) DO UPDATE SET status='active',next_send_at=CASE WHEN subscriber_sequence_enrollments.status IN ('completed','cancelled') THEN excluded.next_send_at ELSE subscriber_sequence_enrollments.next_send_at END,updated_at=CURRENT_TIMESTAMP`,
+        [row.id, sequence.id, nextSendAt],
+      );
+    }
+
+    return {
+      subscriber: {
+        id: Number(row.id), email: row.email, firstName: row.first_name, status: row.status, source: row.source, lastSource: row.last_source,
+        primaryInterest: row.primary_interest, leadMagnetSlug: row.lead_magnet_slug, createdAt: dateString(row.created_at), updatedAt: dateString(row.updated_at), interests: interestKeys,
+      },
+      leadMagnet: magnet,
+    };
+  } catch (error) {
+    console.warn("Audience subscription DB operation failed; falling back to memory response.", error);
+    return {
+      subscriber: {
+        id: -1,
+        email: normalizedEmail,
+        firstName: (input.firstName || "").trim().slice(0, 80),
+        status: "subscribed",
+        source: input.source.slice(0, 80),
+        lastSource: input.source.slice(0, 80),
+        primaryInterest: requestedInterest,
+        leadMagnetSlug: magnet?.slug || null,
+        createdAt: now,
+        updatedAt: now,
+        interests: [requestedInterest],
+      },
+      leadMagnet: magnet,
+    };
+  }
 }
 
 export async function getSubscriberForPreferences(id: number, email: string): Promise<AudienceSubscriber | null> {
@@ -342,5 +380,10 @@ export async function completeSequenceDelivery(item: DueSequenceEmail, status: "
 }
 
 export async function logLeadMagnetDelivery(subscriberId: number, status: "sent" | "skipped" | "failed", providerMessageId = "", errorMessage = "") {
-  await execute(`INSERT INTO email_delivery_logs (subscriber_id,message_type,provider_message_id,status,error_message) VALUES (?,'lead_magnet',?,?,?)`, [subscriberId,providerMessageId || null,status,errorMessage.slice(0,500)]);
+  if (!databaseIsConfigured()) return;
+  try {
+    await execute(`INSERT INTO email_delivery_logs (subscriber_id,message_type,provider_message_id,status,error_message) VALUES (?,'lead_magnet',?,?,?)`, [subscriberId,providerMessageId || null,status,errorMessage.slice(0,500)]);
+  } catch (error) {
+    console.warn("Could not log lead magnet delivery", error);
+  }
 }

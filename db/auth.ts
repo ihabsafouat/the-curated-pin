@@ -164,18 +164,26 @@ export async function consumeRateLimitBucket(input: {
   windowStart: number;
   expiresAt: string;
 }): Promise<number> {
-  const row = await queryOne<{ count: number | string }>(
-    `INSERT INTO rate_limit_buckets (bucket_key, scope, window_start, count, expires_at)
-     VALUES (?, ?, ?, 1, ?)
-     ON CONFLICT(bucket_key, scope, window_start)
-     DO UPDATE SET count = rate_limit_buckets.count + 1, expires_at = excluded.expires_at
-     RETURNING count`,
-    [input.bucketKey, input.scope, input.windowStart, input.expiresAt],
-  );
-  if (Math.random() < 0.01) {
-    await execute("DELETE FROM rate_limit_buckets WHERE expires_at < ?", [new Date().toISOString()]).catch(() => {});
+  const { databaseIsConfigured } = await import("./client");
+  if (!databaseIsConfigured()) {
+    return 1;
   }
-  return Number(row?.count ?? 1);
+  try {
+    const row = await queryOne<{ count: number | string }>(
+      `INSERT INTO rate_limit_buckets (bucket_key, scope, window_start, count, expires_at)
+       VALUES (?, ?, ?, 1, ?)
+       ON CONFLICT(bucket_key, scope, window_start)
+       DO UPDATE SET count = rate_limit_buckets.count + 1, expires_at = excluded.expires_at
+       RETURNING count`,
+      [input.bucketKey, input.scope, input.windowStart, input.expiresAt],
+    );
+    if (Math.random() < 0.01) {
+      await execute("DELETE FROM rate_limit_buckets WHERE expires_at < ?", [new Date().toISOString()]).catch(() => {});
+    }
+    return Number(row?.count ?? 1);
+  } catch {
+    return 1;
+  }
 }
 
 export async function writeAuditLog(input: {

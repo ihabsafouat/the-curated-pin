@@ -77,6 +77,8 @@ function cleanMetadata(value: AnalyticsEventInput["metadata"]): Record<string, s
 }
 
 export async function recordAnalyticsEvent(event: AnalyticsEventInput) {
+  const { databaseIsConfigured } = await import("./client");
+  if (!databaseIsConfigured()) return true;
   const eventId = event.eventId || randomUUID();
   try {
     await execute(
@@ -101,7 +103,8 @@ export async function recordAnalyticsEvent(event: AnalyticsEventInput) {
   } catch (error) {
     // Duplicate event IDs are deliberately idempotent for beacon retries.
     if (String(error).includes("analytics_event_id_unique_idx") || String(error).includes("duplicate key")) return true;
-    throw error;
+    console.warn("Analytics event record skipped:", error);
+    return false;
   }
 }
 

@@ -24,7 +24,7 @@ function ExternalLink({ href, children, className = "", merchant = "", productSl
   return <a href={href} target="_blank" rel="nofollow sponsored noopener" className={className} data-analytics-kind="affiliate" data-merchant={merchant || undefined} data-product-slug={productSlug || undefined} data-analytics-placement={placement || undefined}>{children}</a>;
 }
 
-function siteSlug(url: string, prefix: string) {
+export function siteSlug(url: string, prefix: string) {
   if (!url.startsWith(prefix)) return "";
   return url.slice(prefix.length).split(/[?#/]/)[0] || "";
 }
@@ -43,6 +43,39 @@ export function getFaqItems(blocks: ArticleBlock[]) {
   return blocks.flatMap((block) => block.type === "faq" ? block.items : []);
 }
 
+function renderInlineLinks(text: string): React.ReactNode {
+  if (!text || !text.includes("[") || !text.includes("](") || !text.includes(")")) {
+    return text;
+  }
+  const parts: React.ReactNode[] = [];
+  const regex = /\[([^\]]+)\]\(([^)]+)\)/g;
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push(text.substring(lastIndex, match.index));
+    }
+    const linkText = match[1];
+    const url = match[2];
+    const isInternal = url.startsWith("/");
+    parts.push(
+      <a
+        key={`${match.index}-${url}`}
+        href={url}
+        className="richParagraphLink"
+        {...(!isInternal ? { target: "_blank", rel: "noopener noreferrer" } : { "data-analytics-kind": "internal" })}
+      >
+        {linkText}
+      </a>
+    );
+    lastIndex = regex.lastIndex;
+  }
+  if (lastIndex < text.length) {
+    parts.push(text.substring(lastIndex));
+  }
+  return parts;
+}
+
 export default function ArticleBlocks({ blocks, startIndex = 0, ideaStart = 0 }: { blocks: ArticleBlock[]; startIndex?: number; ideaStart?: number }) {
   let ideaOrdinal=ideaStart;
   return <div className="richArticleBlocks">{blocks.map((block, index) => {
@@ -51,7 +84,7 @@ export default function ArticleBlocks({ blocks, startIndex = 0, ideaStart = 0 }:
     const ideaNumber=block.type==="idea" ? ++ideaOrdinal : 0;
     switch (block.type) {
       case "paragraph":
-        return <p className="richParagraph" key={block.id}>{block.text}</p>;
+        return <p className="richParagraph" key={block.id}>{renderInlineLinks(block.text)}</p>;
       case "heading":
         return block.level === 2
           ? <h2 id={anchorId} className="richHeading richH2" key={block.id}>{block.text}</h2>
@@ -75,11 +108,11 @@ export default function ArticleBlocks({ blocks, startIndex = 0, ideaStart = 0 }:
       case "pros_cons":
         return <section className="prosConsBlock" key={block.id}><h3>{block.title}</h3><div><article><b>Good fit when</b><ul>{block.pros.map((item, itemIndex) => <li key={`${block.id}-p-${itemIndex}`}>{item}</li>)}</ul></article><article><b>Think twice when</b><ul>{block.cons.map((item, itemIndex) => <li key={`${block.id}-c-${itemIndex}`}>{item}</li>)}</ul></article></div></section>;
       case "affiliate_product":
-        return <aside className="affiliateProductBlock" key={block.id} data-analytics-impression="true" data-analytics-kind="affiliate" data-analytics-placement={`block:${block.id}`} data-merchant={block.merchant} data-product-slug={siteSlug(block.url,"/shop/") || undefined} data-analytics-label={block.name}><OptionalImage src={block.image} alt={block.imageAlt}/><div><small>EDITOR&apos;S SHOPPING PICK · {block.merchant}{block.network ? ` · ${block.network}` : ""}</small><h3>{block.name}</h3><p>{block.description}</p>{block.priceNote && <span className="affiliatePriceNote">{block.priceNote}</span>}<p className="inlineDisclosure">Paid link · We may earn a commission if you purchase, at no extra cost to you.</p><ExternalLink href={block.url} merchant={block.merchant} productSlug={siteSlug(block.url,"/shop/")} placement={`block:${block.id}`}>{block.cta} ↗</ExternalLink></div></aside>;
+        return <aside className={`affiliateProductBlock ${block.image ? "hasImage" : "noImage"}`} key={block.id} data-analytics-impression="true" data-analytics-kind="affiliate" data-analytics-placement={`block:${block.id}`} data-merchant={block.merchant} data-product-slug={siteSlug(block.url,"/shop/") || undefined} data-analytics-label={block.name}><OptionalImage src={block.image} alt={block.imageAlt}/><div><small>EDITOR&apos;S SHOPPING PICK · {block.merchant}{block.network ? ` · ${block.network}` : ""}</small><h3>{block.name}</h3><p>{block.description}</p>{block.priceNote && <span className="affiliatePriceNote">{block.priceNote}</span>}<p className="inlineDisclosure">Paid link · We may earn a commission if you purchase, at no extra cost to you.</p><ExternalLink href={block.url} merchant={block.merchant} productSlug={siteSlug(block.url,"/shop/")} placement={`block:${block.id}`}>{block.cta} ↗</ExternalLink></div></aside>;
       case "lead_magnet":
         return <aside className="leadMagnetBlock" key={block.id} data-analytics-impression="true" data-analytics-kind="lead_magnet" data-analytics-placement={`block:${block.id}`} data-lead-magnet={siteSlug(block.url,"/free/") || undefined} data-analytics-label={block.title}><small>{block.eyebrow || "FREE DOWNLOAD"}</small><h3>{block.title}</h3><p>{block.body}</p><a className="downloadButton" href={block.url} data-analytics-kind="lead_magnet" data-lead-magnet={siteSlug(block.url,"/free/") || undefined} data-analytics-placement={`block:${block.id}`}>{block.cta} →</a></aside>;
       case "product_cta":
-        return <aside className="productCtaBlock" key={block.id} data-analytics-impression="true" data-analytics-kind="product" data-analytics-placement={`block:${block.id}`} data-product-slug={siteSlug(block.url,"/shop/") || undefined} data-analytics-label={block.title}><OptionalImage src={block.image} alt={block.imageAlt}/><div><small>{block.eyebrow || "THE CURATED PIN SHOP"}</small><h3>{block.title}</h3><p>{block.body}</p>{block.price && <b>{block.price}</b>}<a href={block.url} data-analytics-kind="product" data-product-slug={siteSlug(block.url,"/shop/") || undefined} data-analytics-placement={`block:${block.id}`}>{block.cta} →</a></div></aside>;
+        return <aside className={`productCtaBlock ${block.image ? "hasImage" : "noImage"}`} key={block.id} data-analytics-impression="true" data-analytics-kind="product" data-analytics-placement={`block:${block.id}`} data-product-slug={siteSlug(block.url,"/shop/") || undefined} data-analytics-label={block.title}><OptionalImage src={block.image} alt={block.imageAlt}/><div><small>{block.eyebrow || "THE CURATED PIN SHOP"}</small><h3>{block.title}</h3><p>{block.body}</p><div className="productCtaAction">{block.price && <b className="productCtaPrice">{block.price}</b>}<a href={block.url} data-analytics-kind="product" data-product-slug={siteSlug(block.url,"/shop/") || undefined} data-analytics-placement={`block:${block.id}`}>{block.cta} →</a></div></div></aside>;
       case "internal_link":
         return <aside className="richInternalLink" key={block.id}><small>{block.eyebrow || "KEEP PLANNING"}</small><h3>{block.title}</h3>{block.body && <p>{block.body}</p>}<a href={block.url} data-analytics-kind="internal" data-analytics-placement={`block:${block.id}`}>{block.anchor} →</a></aside>;
       case "source_list":

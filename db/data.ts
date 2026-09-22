@@ -6,7 +6,15 @@ import type { AnalyticsSummary, ArticleInput, ManagedArticle } from "./types";
 import { databaseIsConfigured } from "./client";
 import { fallbackLaunchArticles } from "./fallback-content";
 
-const LOCAL_CONTENT_SLUGS = new Set(["crochet-pumpkin-pattern", "crochet-ghost-pattern", "crochet-bat-amigurumi-pattern", "crochet-dinosaur-pattern", "halloween-crochet-plushie-collection"]);
+const LOCAL_CONTENT_SLUGS = new Set([
+  "crochet-pumpkin-pattern",
+  "crochet-ghost-pattern",
+  "crochet-bat-amigurumi-pattern",
+  "crochet-dinosaur-pattern",
+  "crochet-dinosaur-amigurumi-pattern",
+  "crochet-bralette-pattern",
+  "halloween-crochet-plushie-collection",
+]);
 
 export type { AnalyticsSummary, ArticleInput, ManagedArticle } from "./types";
 

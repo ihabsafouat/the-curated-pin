@@ -7,7 +7,10 @@ type PreferencePayload = { id: number; email: string; issuedAt: number };
 
 function secret() {
   const value = getRuntimeValue("EMAIL_PREFERENCE_SECRET");
-  if (!value || value.length < 32) throw new Error("EMAIL_PREFERENCE_SECRET must be configured with at least 32 characters.");
+  if (!value || value.length < 32) {
+    if (getRuntimeValue("NODE_ENV") === "production") throw new Error("EMAIL_PREFERENCE_SECRET must be configured with at least 32 characters.");
+    return "development-email-preference-secret-at-least-32-chars-long";
+  }
   return value;
 }
 

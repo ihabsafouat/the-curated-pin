@@ -4,7 +4,14 @@ import { getRuntimeValue } from "../runtime-env";
 const decoder = new TextDecoder();
 type Payload = { subscriberId:number; target:string; messageKey:string; issuedAt:number };
 
-function secret(){const value=getRuntimeValue("EMAIL_PREFERENCE_SECRET");if(!value||value.length<32)throw new Error("EMAIL_PREFERENCE_SECRET must be configured.");return value;}
+function secret(){
+  const value=getRuntimeValue("EMAIL_PREFERENCE_SECRET");
+  if(!value||value.length<32) {
+    if (getRuntimeValue("NODE_ENV") === "production") throw new Error("EMAIL_PREFERENCE_SECRET must be configured.");
+    return "development-email-preference-secret-at-least-32-chars-long";
+  }
+  return value;
+}
 function safeTarget(target:string){return target.startsWith("/")&&!target.startsWith("//")&&target.length<=1200;}
 
 export async function createEmailTrackingToken(subscriberId:number,target:string,messageKey:string){

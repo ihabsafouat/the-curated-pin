@@ -34,6 +34,20 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  async redirects() {
+    return [
+      {
+        source: "/article/crochet-ghost-amigurumi-pattern",
+        destination: "/article/crochet-ghost-pattern",
+        permanent: true,
+      },
+      {
+        source: "/free/crochet-ghost-amigurumi-pattern",
+        destination: "/free/crochet-ghost-pattern",
+        permanent: false,
+      },
+    ];
+  },
   async headers() {
     return [
       {
