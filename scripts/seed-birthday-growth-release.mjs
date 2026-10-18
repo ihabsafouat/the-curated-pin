@@ -1,5 +1,6 @@
 import pg from "pg";
 import { growthArticles } from "../launch/birthday-growth-content.mjs";
+import { caramelAppleBarArticles } from "../launch/caramel-apple-bar-content.mjs";
 
 const databaseUrl = process.env.DATABASE_MIGRATION_URL || process.env.DATABASE_URL;
 if (!databaseUrl) throw new Error("DATABASE_MIGRATION_URL or DATABASE_URL is required.");
@@ -10,9 +11,11 @@ const client = new pg.Client({
 });
 await client.connect();
 
+const articlesToRelease = [...growthArticles, ...caramelAppleBarArticles];
+
 try {
   await client.query("BEGIN");
-  for (const article of growthArticles) {
+  for (const article of articlesToRelease) {
     const category = await client.query(
       "SELECT id,name,path FROM categories WHERE path=$1 AND status='active' LIMIT 1",
       [article.categoryPath],
@@ -55,7 +58,7 @@ try {
     );
   }
   await client.query("COMMIT");
-  process.stdout.write(`Published ${growthArticles.length} Birthday growth articles. Existing URLs were preserved.\n`);
+  process.stdout.write(`Published ${articlesToRelease.length} Birthday celebration articles. Existing URLs were preserved.\n`);
 } catch (error) {
   await client.query("ROLLBACK");
   throw error;

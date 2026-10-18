@@ -81,6 +81,7 @@ const articlePromiseOverrides: Record<string, { label: string; title: string; it
   "crochet-flower-bouquet-pattern": { label: "FREE CROCHET GUIDE", title: "Plan a bouquet that looks balanced from every angle.", items: ["Flower and leaf ratios", "Stem-height and color map", "Complete assembly sequence"] },
   "easy-crochet-baby-blanket-pattern": { label: "FREE CROCHET GUIDE", title: "Plan the size and yarn before the first long row.", items: ["Materials and gauge math", "Finished measurements", "Border and troubleshooting notes"] },
   "crochet-ghost-pattern": { label: "FREE CROCHET PATTERN", title: "A friendly witch-hat ghost designed for smooth Halloween crafting.", items: ["Materials and yarn recommendations", "Step-by-step amigurumi guide", "Printable pattern PDF and display ideas"] },
+  "caramel-apple-bar-ideas": { label: "CARAMEL APPLE BAR GUIDE", title: "An interactive, crowd-pleasing fall dessert station everyone will love.", items: ["20+ crunchy and sweet topping ideas", "Fresh apple prep and anti-browning tips", "Make-ahead timeline and allergy-safe setup"] },
 };
 
 function articlePromise(article: { slug: string; categoryPath: string }) {

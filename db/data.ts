@@ -11,6 +11,7 @@ const LOCAL_CONTENT_SLUGS = new Set([
     .filter((article) => article.categoryPath === "crafts/crochet" || article.categoryPath.startsWith("crafts/crochet/"))
     .map((article) => article.slug),
   "crochet-dinosaur-pattern",
+  "caramel-apple-bar-ideas",
 ]);
 
 export type { AnalyticsSummary, ArticleInput, ManagedArticle } from "./types";

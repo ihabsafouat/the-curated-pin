@@ -7,12 +7,13 @@ import { growthArticles } from "../launch/birthday-growth-content.mjs";
 import { verticalArticles } from "../launch/vertical-launch-content.mjs";
 import { halloweenCrochetArticles } from "../launch/halloween-crochet-content.mjs";
 import { braletteArticles } from "../launch/bralette-content.mjs";
+import { caramelAppleBarArticles } from "../launch/caramel-apple-bar-content.mjs";
 
 test("fallback publishing contains every Birthday article plus Crochet only",()=>{
   const expectedBirthdaySlugs=new Set([...launchArticles,...growthArticles].map((article)=>article.slug));
   const publishedSlugs=new Set(fallbackLaunchArticles.map((article)=>article.slug));
   for(const slug of expectedBirthdaySlugs) assert.ok(publishedSlugs.has(slug),`Birthday URL preserved: ${slug}`);
-  assert.equal(fallbackLaunchArticles.length,launchArticles.length+growthArticles.length+verticalArticles.length+halloweenCrochetArticles.length+braletteArticles.length);
+  assert.equal(fallbackLaunchArticles.length,launchArticles.length+growthArticles.length+verticalArticles.length+halloweenCrochetArticles.length+braletteArticles.length+caramelAppleBarArticles.length);
   assert.ok(fallbackLaunchArticles.every((article)=>article.categoryPath.startsWith("celebrations/birthday-parties")||article.categoryPath.startsWith("crafts/crochet")));
 });
 
